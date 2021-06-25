@@ -1,0 +1,33 @@
+[DLSimRunSpace]
+
+[Breakpoint]
+File=C:\Users\pinks\Documents\CASIO\fx-9860G SDK\CaveDash\CaveDash.c
+Line=303
+Flags=00001012
+
+[Breakpoint]
+File=C:\Users\pinks\Documents\CASIO\fx-9860G SDK\CaveDash\CaveDash.c
+Line=302
+Flags=00001012
+
+[Breakpoint]
+File=C:\Users\pinks\Documents\CASIO\fx-9860G SDK\CaveDash\CaveDash.c
+Line=195
+Flags=00001012
+
+[Breakpoint]
+File=C:\Users\pinks\Documents\CASIO\fx-9860G SDK\CaveDash\CaveDash.c
+Line=196
+Flags=00001012
+
+[Breakpoint]
+File=C:\Users\pinks\Documents\CASIO\fx-9860G SDK\CaveDash\CaveDash.c
+Line=199
+Flags=00001012
+Sublevel=1
+
+[Breakpoint]
+File=C:\Users\pinks\Documents\CASIO\fx-9860G SDK\CaveDash\CaveDash.c
+Line=199
+Flags=00001012
+Sublevel=2

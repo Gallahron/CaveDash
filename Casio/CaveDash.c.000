@@ -1,0 +1,438 @@
+/*****************************************************************/
+/*                                                               */
+/*   CASIO fx-9860G SDK Library                                  */
+/*                                                               */
+/*   File name : [ProjectName].c                                 */
+/*                                                               */
+/*   Copyright (c) 2006 CASIO COMPUTER CO., LTD.                 */
+/*                                                               */
+/*****************************************************************/
+#include "fxlib.h"
+
+
+#include "stdlib.h"
+#include "math.h"
+
+//Struct Definition
+
+struct Player {
+    bool dead;
+    Vector2 pos;
+    float gravDir;
+    float speed;
+    bool collided;
+    Vector2 size;
+    Color color;
+};
+struct Platform {
+    Vector2 pos;
+    Vector2 size;
+    Color color;
+    struct Platform* next;
+    struct Platform* last;
+    bool spawnedNext;
+    int side;
+};
+struct Particle {
+    bool active;
+    float lifeTime;
+    Vector2 size;
+    Vector2 pos;
+    struct Particle* next;
+    struct Particle* last;
+};
+
+
+//Functions
+
+float tunnelHeight(float xPos, float freq) {
+    float A = 10;
+    float B = 4;
+    float C = 10;
+    
+    float tot = A + B + C;
+    /*A = (rand() % (int)A + 1) / tot;
+    B = (rand() % (int)B + 1) / tot;
+    C = (rand() % (int)C + 1) / tot;*/
+    A /= tot;
+    B /= tot;
+    C /= tot;
+    
+    float a = 2;
+    float b = 1;
+    float c = 0.1F;
+    
+    
+    return (float)(A * sin(freq * a * xPos / 1000) + B * sin(freq * b * xPos / 1000) + C * sin(freq * c * xPos / 10));
+}
+Vector2 TrailSize(struct Particle trail, float timeStep) {
+    float shrinkSpeed = 70;
+    trail.size.x -= shrinkSpeed * timeStep;
+    trail.size.y -= shrinkSpeed * timeStep;
+    return trail.size;
+}
+
+float ClampFloat(float val, float min, float max) {
+    if (val < min) val = min;
+    if (val > max) val = max;
+    return val;
+}
+
+
+
+int AddIn_main(int isAppli, unsigned short OptionNum)
+{
+    unsigned int key;
+
+    Bdisp_AllClr_DDVRAM();
+
+    locate(1,4);
+    Print((unsigned char*)"This application is");
+    locate(1,5);
+    Print((unsigned char*)" sample Add-In.");
+
+    while(1){
+        GetKey(&key);
+    }
+
+    return 1;
+}
+
+
+
+
+//****************************************************************************
+//**************                                              ****************
+//**************                 Notice!                      ****************
+//**************                                              ****************
+//**************  Please do not change the following source.  ****************
+//**************                                              ****************
+//****************************************************************************
+
+
+#pragma section _BR_Size
+unsigned long BR_Size;
+#pragma section
+
+
+#pragma section _TOP
+
+//****************************************************************************
+//  InitializeSystem
+//
+//  param   :   isAppli   : 1 = Application / 0 = eActivity
+//              OptionNum : Option Number (only eActivity)
+//
+//  retval  :   1 = No error / 0 = Error
+//
+//****************************************************************************
+int InitializeSystem(int isAppli, unsigned short OptionNum)
+{
+    return INIT_ADDIN_APPLICATION(isAppli, OptionNum);
+}
+
+#pragma section
+
+/*#include "raylib.h"
+#include "stdlib.h"
+#include "math.h"
+
+//Struct Definition
+
+struct Player {
+    bool dead;
+    Vector2 pos;
+    float gravDir;
+    float speed;
+    bool collided;
+    Vector2 size;
+    Color color;
+};
+struct Platform {
+    Vector2 pos;
+    Vector2 size;
+    Color color;
+    struct Platform* next;
+    struct Platform* last;
+    bool spawnedNext;
+    int side;
+};
+struct Particle {
+    bool active;
+    float lifeTime;
+    Vector2 size;
+    Vector2 pos;
+    struct Particle* next;
+    struct Particle* last;
+};
+
+
+//Functions
+
+float tunnelHeight(float xPos, float freq) {
+    float A = 10;
+    float B = 4;
+    float C = 10;
+    
+    float tot = A + B + C;
+    /*A = (rand() % (int)A + 1) / tot;
+    B = (rand() % (int)B + 1) / tot;
+    C = (rand() % (int)C + 1) / tot;*/
+    A /= tot;
+    B /= tot;
+    C /= tot;
+    
+    float a = 2;
+    float b = 1;
+    float c = 0.1F;
+    
+    
+    return (float)(A * sin(freq * a * xPos / 1000) + B * sin(freq * b * xPos / 1000) + C * sin(freq * c * xPos / 10));
+}
+Vector2 TrailSize(struct Particle trail, float timeStep) {
+    float shrinkSpeed = 70;
+    trail.size.x -= shrinkSpeed * timeStep;
+    trail.size.y -= shrinkSpeed * timeStep;
+    return trail.size;
+}
+
+float ClampFloat(float val, float min, float max) {
+    if (val < min) val = min;
+    if (val > max) val = max;
+    return val;
+}
+
+
+
+
+int main(void)
+{
+    // Initialization
+    //--------------------------------------------------------------------------------------
+    const int screenWidth = 800;
+    const int screenHeight = 450;
+    const float gravity = 400;
+
+    InitWindow(screenWidth, screenHeight, "Gravity Run");
+
+    //SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
+    
+    
+    
+    struct Player player = {
+        .pos = {100, screenHeight / 2},
+        .gravDir = -1,
+        .collided = false,   
+        .size = {30,30},
+        .color = RED,
+        .dead = false
+    };
+    /*struct Platform platforms[] = {
+        {.pos = {0, screenHeight - 50}, .size = {screenWidth, 50}, .color = BLUE},
+        {.pos = {0, 0}, .size = {screenWidth, 50}, .color = RED},
+    };*/
+    
+    struct Platform firstPlatform = {.pos = {0, -40}, .size = {screenWidth, 50}, .color = RED, .side = -1};
+    {
+        firstPlatform.next = malloc(sizeof(firstPlatform));
+        struct Platform second = {.pos = {0, screenHeight - 10}, .size = {screenWidth, 50}, .color = BLUE, .side = 1, .last = &firstPlatform};
+        *(firstPlatform.next) = second;
+    }
+    struct Particle firstParticle = {.active = false};
+    
+    
+    
+    float timeStep = 1;
+    float scrollSpeed = -200;
+    float sinFreq = 1;
+    float sinAmp = screenHeight / 4;
+    float tunnelWidth = screenHeight / 2 + 40;
+    float minTunnelWidth = 100;
+    float narrowSpeed = 2.5F;
+    float globalXPos = 0;
+    
+    // Main game loop
+    while (!WindowShouldClose())    // Detect window close button or ESC key
+    {
+        if (!player.dead){
+            timeStep = GetFrameTime();
+        }
+        else timeStep = 0;
+        
+        tunnelWidth -= narrowSpeed * timeStep;
+        if (tunnelWidth < minTunnelWidth) {
+            tunnelWidth = minTunnelWidth;
+        }
+        sinAmp += timeStep * 0.005f;
+        sinFreq += timeStep * 0.005f;
+        scrollSpeed += timeStep * 0.5f;
+        globalXPos += timeStep * scrollSpeed;
+        
+        
+        if (IsKeyPressed(KEY_SPACE)) {
+            if (!player.dead){
+                player.gravDir *= -1;
+                player.pos.y -= player.gravDir;
+            }
+            /*else{
+                player = {
+                    .pos = {100, screenHeight / 2},
+                    .gravDir = -1,
+                    .collided = false,
+                    .size = {30,30},
+                    .color = RED,
+                    .dead = false
+                };
+                struct Platform* platform = &firstPlatform;
+                while (platform != NULL){
+
+                    
+            }*/
+        }
+        
+        //Particles
+        struct Particle* current = &firstParticle;
+        while (current->next != NULL){
+            current = current->next;
+            current->size = TrailSize(*current, timeStep);
+            current->pos.x += timeStep * scrollSpeed;
+            current->lifeTime += timeStep;
+            if (current->size.y <= 0){
+                if (current->next !=NULL){
+                    current->next->last = current->last;
+                    current->last->next = current->next;
+                }
+            }
+        }
+        /*active
+        lifetime
+        size
+        pos
+        next
+        last*/
+        struct Particle instance = {.active = true, .lifeTime = 0, .size = player.size, .pos = player.pos, .next = NULL, .last = current};
+        current->next = malloc(sizeof(instance));
+        *(current->next) = instance;
+        
+        
+        
+        //Gravity
+        player.speed += gravity * player.gravDir * timeStep;
+        player.pos.y += player.speed * timeStep;
+        
+        //Collisions
+        player.collided = false;
+        
+        
+        
+        struct Platform* platform = &firstPlatform;
+        while (platform != NULL){
+            platform->pos.x += timeStep * scrollSpeed;
+            
+            for (int i = 0; i < 2; i++){
+                for (int j = -1; j < 2; j += 2){
+                    Vector2 corner = {player.pos.x + player.size.x * i, player.pos.y + player.size.y * (j + 1 )/2};
+                    if (corner.x > platform->pos.x && corner.x < platform->pos.x + platform->size.x && corner.y > platform->pos.y && corner.y < platform->pos.y + platform->size.y){
+                        player.collided = true;
+                        player.dead = true;
+                        /*if (player.gravDir == 1) player.pos.y = platform->pos.y - player.size.y;
+                        else player.pos.y = platform->pos.y + platform->size.y;
+                        player.speed = 0;*/
+                    }
+                }
+            }
+            
+            int inside = 0;
+            for (int i = 0; i < 3; i++){
+                Vector2 corner = {player.pos.x + player.size.x, player.pos.y + player.size.y * (float)i / 2};
+                if (corner.x > platform->pos.x && corner.x < platform->pos.x + platform->size.x && corner.y > platform->pos.y && corner.y < platform->pos.y + platform->size.y){
+                    inside++;
+                }  
+            }
+            if (inside > 1) player.dead = true;
+            
+            //Spawn next platform
+            if (platform->pos.x + platform->size.x < screenWidth && !platform->spawnedNext){
+                Vector2 newPos;
+                Vector2 newSize;
+                if (platform->side == -1){
+                    newPos = (Vector2){screenWidth,0};
+                    newSize = (Vector2){15,ClampFloat(tunnelHeight(globalXPos, sinFreq) * sinAmp + screenHeight / 2 + platform->side * tunnelWidth, 10, screenHeight - 10) };
+                }
+                else{
+                    newPos = (Vector2){screenWidth, ClampFloat(tunnelHeight(globalXPos, sinFreq) * sinAmp + screenHeight / 2 + platform->side * tunnelWidth, -platform->size.y + 10, screenHeight - 10)};
+                    newSize = (Vector2){15,1000};
+                }
+                struct Platform instance = {.pos = newPos, .size = newSize, .color = BLUE, .next = platform->next, .side = platform->side, .last = platform};
+                
+                platform->next = malloc(sizeof(*platform));
+                *(platform->next) = instance;
+                if (platform->next->next != NULL){
+                    platform->next->next->last = platform->next;
+                }
+                platform->spawnedNext = true;
+            }
+            else if (platform->pos.x + platform->size.x < 0) {
+                if (platform->last != NULL){
+                    platform->last->next = platform->next;
+                    platform->next->last = platform->last;
+                }
+            }
+            
+            platform = platform->next;
+        }
+        
+        
+        // Draw
+        //----------------------------------------------------------------------------------
+        BeginDrawing();
+
+            ClearBackground(RAYWHITE);
+            
+            
+            //Trail
+            current = &firstParticle;
+            while (current->next != NULL){
+                current = current->next;
+                DrawRectangleV(current->pos, current->size, LIGHTGRAY);
+            }
+            
+            //Player
+            DrawRectangleV(player.pos, player.size, player.color);
+            
+            //Walls
+            platform = &firstPlatform;
+            int count = 0;
+            
+            while (platform != NULL){
+                DrawRectangleV(platform->pos, platform->size, platform->color);
+                platform = platform->next;
+                count++;
+            }
+            
+            DrawText(TextFormat("Score: %i", -(int)globalXPos / 10 ), 10, 10, 30, LIGHTGRAY);
+            DrawText(TextFormat("FPS: %i", GetFPS()), 10, 50, 30, LIGHTGRAY);
+            //DrawText(TextFormat("%i", GetFPS()), 190, 250, 20, LIGHTGRAY);
+            for (int i = 0; i < 2; i++){
+                Vector2 corner = {player.pos.x + player.size.x * i, player.pos.y + player.size.y * (player.gravDir + 1 )/2};
+                DrawCircleV (corner, 5, GREEN);
+            }
+            /*
+            for (int i = 0; i < 3; i++){
+                Vector2 corner = {player.pos.x + player.size.x, player.pos.y + player.size.y * (float)i / 2};
+                DrawCircleV (corner, 5, BLUE);
+            }*/
+            if (player.dead) DrawText("You Are Dead!", 200,200, 50, GRAY);
+
+        EndDrawing();
+        //----------------------------------------------------------------------------------
+    }
+
+    // De-Initialization
+    //--------------------------------------------------------------------------------------
+    CloseWindow();        // Close window and OpenGL context
+    //--------------------------------------------------------------------------------------
+
+    return 0;
+}
+*/

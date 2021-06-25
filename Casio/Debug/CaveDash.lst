@@ -1,0 +1,1919 @@
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE    1
+
+************ OBJECT LISTING ************
+
+FILE NAME: C:\Users\pinks\Documents\CASIO\fx-9860G SDK\CaveDash\CaveDash.c
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+      CaveDash.c     1    #include "fxlib.h"
+      CaveDash.c     2    #include "stdlib.h"
+      CaveDash.c     3    #include "math.h"
+      CaveDash.c     4    #include "stdio.h"
+      CaveDash.c     5    
+      CaveDash.c     6    
+      CaveDash.c     7    /*printing float
+      CaveDash.c     8    void incTime() {
+      CaveDash.c     9                unsigned char output[20];
+      CaveDash.c    10                time += 0.05F;
+      CaveDash.c    11            
+      CaveDash.c    12                memset(output,0,20);
+      CaveDash.c    13                sprintf(&output, "Time:%f",time);
+      CaveDash.c    14                
+      CaveDash.c    15                
+      CaveDash.c    16                locate(1,4);
+      CaveDash.c    17                Print((unsigned char*)output);
+      CaveDash.c    18                Bdisp_PutDisp_DD();
+      CaveDash.c    19    }
+      CaveDash.c    20    */
+      CaveDash.c    21    const int screenWidth = 127;
+      CaveDash.c    22    const int screenHeight = 63;
+      CaveDash.c    23    const float gravity = 5;
+      CaveDash.c    24    //Struct Definition
+      CaveDash.c    25    
+      CaveDash.c    26    struct Vector2 {
+      CaveDash.c    27        float x;
+      CaveDash.c    28        float y;
+      CaveDash.c    29    };
+      CaveDash.c    30    struct Player {
+      CaveDash.c    31        int dead;
+      CaveDash.c    32        struct Vector2 pos;
+      CaveDash.c    33        float gravDir;
+      CaveDash.c    34        float speed;
+      CaveDash.c    35        int collided;
+      CaveDash.c    36        struct Vector2 size;
+      CaveDash.c    37    
+      CaveDash.c    38    };
+      CaveDash.c    39    struct Platform {
+      CaveDash.c    40        int active;
+      CaveDash.c    41        struct Vector2 pos;
+      CaveDash.c    42        struct Vector2 size;
+      CaveDash.c    43        struct Platform* next;
+      CaveDash.c    44        struct Platform* last;
+      CaveDash.c    45        int spawnedNext;
+      CaveDash.c    46        int side;
+      CaveDash.c    47    };
+      CaveDash.c    48    struct Particle {
+      CaveDash.c    49        int active;
+      CaveDash.c    50        float lifeTime;
+      CaveDash.c    51        struct Vector2 size;
+      CaveDash.c    52        struct Vector2 pos;
+      CaveDash.c    53        struct Particle* next;
+      CaveDash.c    54        struct Particle* last;
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE    2
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+      CaveDash.c    55    };
+      CaveDash.c    56    
+      CaveDash.c    57    //Functions
+      CaveDash.c    58    
+      CaveDash.c    59    float tunnelHeight(float xPos, float freq) {
+P   00000000              _tunnelHeight:                   ; function: tunnelHeight
+                                                           ; frame size=84
+                                                           ; used runtime library name:
+                                                           ; __addd, __muls, __muld, __divs, __stod, __dtos
+    00000000 2FE6                   MOV.L       R14,@-R15
+    00000002 2FD6                   MOV.L       R13,@-R15
+    00000004 4F22                   STS.L       PR,@-R15
+    00000006 7FEC                   ADD         #-20,R15
+      CaveDash.c    60        float A = 10;
+      CaveDash.c    61        float B = 4;
+      CaveDash.c    62        float C = 10;
+      CaveDash.c    63        
+      CaveDash.c    64        float tot = A + B + C;
+      CaveDash.c    65        
+      CaveDash.c    66        float a = 2;
+    00000008 D3A6                   MOV.L       L503,R3    ; H'40000000
+    0000000A 1F41                   MOV.L       R4,@(4,R15)
+    0000000C 2F52                   MOV.L       R5,@R15
+    0000000E 1F33                   MOV.L       R3,@(12,R15)
+      CaveDash.c    67        float b = 1;
+    00000010 D2A5                   MOV.L       L503+4,R2  ; H'3F800000
+    00000012 1F22                   MOV.L       R2,@(8,R15)
+      CaveDash.c    68        float c = 0.1F;
+    00000014 D3A5                   MOV.L       L503+8,R3  ; H'3DCCCCCD
+    00000016 1F34                   MOV.L       R3,@(16,R15)
+      CaveDash.c    69        /*A = (rand() % (int)A + 1) / tot;
+      CaveDash.c    70        B = (rand() % (int)B + 1) / tot;
+      CaveDash.c    71        C = (rand() % (int)C + 1) / tot;*/
+      CaveDash.c    72        A /= tot;
+      CaveDash.c    73        B /= tot;
+      CaveDash.c    74        C /= tot;
+      CaveDash.c    75        
+      CaveDash.c    76        
+      CaveDash.c    77        
+      CaveDash.c    78        
+      CaveDash.c    79        return (float)(A * sin(freq * a * xPos / 1000) + B * sin(freq * b * xPos / 1000) + C * sin(freq * c * 
+                         +xPos / 1000));
+    00000018 DDA5                   MOV.L       L503+12,R13; _sin
+    0000001A 7FE0                   ADD         #-32,R15
+    0000001C D3A5                   MOV.L       L503+16,R3 ; __muls
+    0000001E 51F9                   MOV.L       @(36,R15),R1
+    00000020 430B                   JSR         @R3
+    00000022 50F8                   MOV.L       @(32,R15),R0
+    00000024 D3A3                   MOV.L       L503+16,R3 ; __muls
+    00000026 6E03                   MOV         R0,R14
+    00000028 430B                   JSR         @R3
+    0000002A 51FB                   MOV.L       @(44,R15),R1
+    0000002C D2A3                   MOV.L       L503+24,R2 ; __divs
+    0000002E 6103                   MOV         R0,R1
+    00000030 D0A1                   MOV.L       L503+20,R0 ; H'447A0000
+    00000032 420B                   JSR         @R2
+    00000034 0009                   NOP
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE    3
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    00000036 7FF8                   ADD         #-8,R15
+    00000038 D3A1                   MOV.L       L503+28,R3 ; __stod
+    0000003A 430B                   JSR         @R3
+    0000003C 2FF6                   MOV.L       R15,@-R15
+    0000003E E208                   MOV         #8,R2
+    00000040 32FC                   ADD         R15,R2
+    00000042 4D0B                   JSR         @R13
+    00000044 2F26                   MOV.L       R2,@-R15
+    00000046 7F0C                   ADD         #12,R15
+    00000048 D19E                   MOV.L       L503+32,R1 ; H'A0000000
+    0000004A 2F16                   MOV.L       R1,@-R15
+    0000004C D19E                   MOV.L       L503+36,R1 ; H'3FDAAAAA
+    0000004E 2F16                   MOV.L       R1,@-R15
+    00000050 D29E                   MOV.L       L503+40,R2 ; __muld
+    00000052 63F3                   MOV         R15,R3
+    00000054 7310                   ADD         #16,R3
+    00000056 420B                   JSR         @R2
+    00000058 2F36                   MOV.L       R3,@-R15
+    0000005A 7FF0                   ADD         #-16,R15
+    0000005C D395                   MOV.L       L503+16,R3 ; __muls
+    0000005E 61E3                   MOV         R14,R1
+    00000060 430B                   JSR         @R3
+    00000062 50FC                   MOV.L       @(48,R15),R0
+    00000064 D295                   MOV.L       L503+24,R2 ; __divs
+    00000066 6103                   MOV         R0,R1
+    00000068 D093                   MOV.L       L503+20,R0 ; H'447A0000
+    0000006A 420B                   JSR         @R2
+    0000006C 0009                   NOP
+    0000006E 7FF8                   ADD         #-8,R15
+    00000070 D393                   MOV.L       L503+28,R3 ; __stod
+    00000072 430B                   JSR         @R3
+    00000074 2FF6                   MOV.L       R15,@-R15
+    00000076 E208                   MOV         #8,R2
+    00000078 32FC                   ADD         R15,R2
+    0000007A 4D0B                   JSR         @R13
+    0000007C 2F26                   MOV.L       R2,@-R15
+    0000007E 7F0C                   ADD         #12,R15
+    00000080 D193                   MOV.L       L503+44,R1 ; H'60000000
+    00000082 2F16                   MOV.L       R1,@-R15
+    00000084 D193                   MOV.L       L503+48,R1 ; H'3FC55555
+    00000086 2F16                   MOV.L       R1,@-R15
+    00000088 D290                   MOV.L       L503+40,R2 ; __muld
+    0000008A 63F3                   MOV         R15,R3
+    0000008C 7310                   ADD         #16,R3
+    0000008E 420B                   JSR         @R2
+    00000090 2F36                   MOV.L       R3,@-R15
+    00000092 61F3                   MOV         R15,R1
+    00000094 D090                   MOV.L       L503+52,R0 ; __addd
+    00000096 7110                   ADD         #16,R1
+    00000098 400B                   JSR         @R0
+    0000009A 2F16                   MOV.L       R1,@-R15
+    0000009C D385                   MOV.L       L503+16,R3 ; __muls
+    0000009E 7FF0                   ADD         #-16,R15
+    000000A0 61E3                   MOV         R14,R1
+    000000A2 430B                   JSR         @R3
+    000000A4 50FC                   MOV.L       @(48,R15),R0
+    000000A6 6103                   MOV         R0,R1
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE    4
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    000000A8 D284                   MOV.L       L503+24,R2 ; __divs
+    000000AA D083                   MOV.L       L503+20,R0 ; H'447A0000
+    000000AC 420B                   JSR         @R2
+    000000AE 0009                   NOP
+    000000B0 D383                   MOV.L       L503+28,R3 ; __stod
+    000000B2 7FF8                   ADD         #-8,R15
+    000000B4 430B                   JSR         @R3
+    000000B6 2FF6                   MOV.L       R15,@-R15
+    000000B8 E208                   MOV         #8,R2
+    000000BA 32FC                   ADD         R15,R2
+    000000BC 4D0B                   JSR         @R13
+    000000BE 2F26                   MOV.L       R2,@-R15
+    000000C0 D180                   MOV.L       L503+32,R1 ; H'A0000000
+    000000C2 7F0C                   ADD         #12,R15
+    000000C4 D281                   MOV.L       L503+40,R2 ; __muld
+    000000C6 2F16                   MOV.L       R1,@-R15
+    000000C8 D17F                   MOV.L       L503+36,R1 ; H'3FDAAAAA
+    000000CA 2F16                   MOV.L       R1,@-R15
+    000000CC 63F3                   MOV         R15,R3
+    000000CE 7310                   ADD         #16,R3
+    000000D0 420B                   JSR         @R2
+    000000D2 2F36                   MOV.L       R3,@-R15
+    000000D4 D080                   MOV.L       L503+52,R0 ; __addd
+    000000D6 61F3                   MOV         R15,R1
+    000000D8 7110                   ADD         #16,R1
+    000000DA 400B                   JSR         @R0
+    000000DC 2F16                   MOV.L       R1,@-R15
+    000000DE D37F                   MOV.L       L503+56,R3 ; __dtos
+    000000E0 430B                   JSR         @R3
+    000000E2 0009                   NOP
+      CaveDash.c    80    }
+    000000E4 7F14                   ADD         #20,R15
+    000000E6 4F26                   LDS.L       @R15+,PR
+    000000E8 6DF6                   MOV.L       @R15+,R13
+    000000EA 000B                   RTS
+    000000EC 6EF6                   MOV.L       @R15+,R14
+      CaveDash.c    81    
+      CaveDash.c    82    /*struct Vector2 TrailSize(struct Particle trail, float timeStep) {
+      CaveDash.c    83        float shrinkSpeed = 70;
+      CaveDash.c    84        trail.size.x -= shrinkSpeed * timeStep;
+      CaveDash.c    85        trail.size.y -= shrinkSpeed * timeStep;
+      CaveDash.c    86        return trail.size;
+      CaveDash.c    87    }*/
+      CaveDash.c    88    
+      CaveDash.c    89    float ClampFloat(float val, float min, float max) {
+    000000EE              _ClampFloat:                     ; function: ClampFloat
+                                                           ; frame size=4
+                                                           ; used runtime library name:
+                                                           ; __gts, __lts
+      CaveDash.c    90        if (val < min) val = min;
+    000000EE 6143                   MOV         R4,R1
+    000000F0 D27B                   MOV.L       L503+60,R2 ; __lts
+    000000F2 4F22                   STS.L       PR,@-R15
+    000000F4 420B                   JSR         @R2
+    000000F6 6053                   MOV         R5,R0
+    000000F8 8800                   CMP/EQ      #0,R0
+    000000FA 8900                   BT          L467
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE    5
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    000000FC 6453                   MOV         R5,R4
+    000000FE              L467:                             
+      CaveDash.c    91        if (val > max) val = max;
+    000000FE 6143                   MOV         R4,R1
+    00000100 D378                   MOV.L       L503+64,R3 ; __gts
+    00000102 430B                   JSR         @R3
+    00000104 6063                   MOV         R6,R0
+    00000106 8800                   CMP/EQ      #0,R0
+    00000108 8900                   BT          L468
+    0000010A 6463                   MOV         R6,R4
+    0000010C              L468:                             
+      CaveDash.c    92        return val;
+      CaveDash.c    93    }
+    0000010C 4F26                   LDS.L       @R15+,PR
+    0000010E 000B                   RTS
+    00000110 6043                   MOV         R4,R0
+      CaveDash.c    94    
+      CaveDash.c    95    float time = 0;
+      CaveDash.c    96    float d = 0;
+      CaveDash.c    97    float c = 0;
+      CaveDash.c    98    
+      CaveDash.c    99    
+      CaveDash.c   100    unsigned int key;
+      CaveDash.c   101    float timeStep = 1;
+      CaveDash.c   102    float scrollSpeed = -10;
+      CaveDash.c   103    float sinFreq = 10;
+      CaveDash.c   104    float sinAmp;
+      CaveDash.c   105    float tunnelWidth;
+      CaveDash.c   106    float minTunnelWidth = 20;
+      CaveDash.c   107    float narrowSpeed = 2.5F;
+      CaveDash.c   108    float globalXPos = 0;
+      CaveDash.c   109    
+      CaveDash.c   110    struct Player player;
+      CaveDash.c   111    struct Platform firstPlatform;
+      CaveDash.c   112    
+      CaveDash.c   113    void incTime() {
+    00000112              _incTime:                        ; function: incTime
+                                                           ; frame size=4
+                                                           ; used runtime library name:
+                                                           ; __adds
+    00000112 4F22                   STS.L       PR,@-R15
+      CaveDash.c   114            time += 0.01F;
+    00000114 D474                   MOV.L       L503+68,R4 ; _time
+    00000116 D075                   MOV.L       L503+72,R0 ; H'3C23D70A
+    00000118 D375                   MOV.L       L503+76,R3 ; __adds
+    0000011A 430B                   JSR         @R3
+    0000011C 6142                   MOV.L       @R4,R1
+      CaveDash.c   115    }
+    0000011E 4F26                   LDS.L       @R15+,PR
+    00000120 000B                   RTS
+    00000122 2402                   MOV.L       R0,@R4
+      CaveDash.c   116    
+      CaveDash.c   117    void DrawRect(struct Vector2 pos, struct Vector2 size){
+    00000124              _DrawRect:                       ; function: DrawRect
+                                                           ; frame size=24
+                                                           ; used runtime library name:
+                                                           ; __adds, __subs, __stoi, __itos, __gts, __lts
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE    6
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    00000124 2FE6                   MOV.L       R14,@-R15
+    00000126 2FD6                   MOV.L       R13,@-R15
+    00000128 2FC6                   MOV.L       R12,@-R15
+    0000012A 4F22                   STS.L       PR,@-R15
+    0000012C D36C                   MOV.L       L503+60,R3 ; __lts
+    0000012E 7FF8                   ADD         #-8,R15
+    00000130 6DF3                   MOV         R15,R13
+    00000132 7D20                   ADD         #32,R13
+    00000134 6EF3                   MOV         R15,R14
+    00000136 7E18                   ADD         #24,R14
+    00000138 64E2                   MOV.L       @R14,R4
+    0000013A 6143                   MOV         R4,R1
+    0000013C 430B                   JSR         @R3
+    0000013E E000                   MOV         #0,R0
+    00000140 8800                   CMP/EQ      #0,R0
+    00000142 8906                   BT          L470
+      CaveDash.c   118        if (pos.x < 0) {
+      CaveDash.c   119            size.x += pos.x;
+    00000144 D26A                   MOV.L       L503+76,R2 ; __adds
+    00000146 6043                   MOV         R4,R0
+    00000148 420B                   JSR         @R2
+    0000014A 61D2                   MOV.L       @R13,R1
+    0000014C 2D02                   MOV.L       R0,@R13
+      CaveDash.c   120            pos.x = 0;
+    0000014E E300                   MOV         #0,R3
+    00000150 2E32                   MOV.L       R3,@R14
+    00000152              L470:                             
+    00000152 54E1                   MOV.L       @(4,R14),R4
+    00000154 D262                   MOV.L       L503+60,R2 ; __lts
+    00000156 6143                   MOV         R4,R1
+    00000158 420B                   JSR         @R2
+    0000015A E000                   MOV         #0,R0
+    0000015C 8800                   CMP/EQ      #0,R0
+    0000015E 8906                   BT          L471
+      CaveDash.c   121        }
+      CaveDash.c   122        if (pos.y < 0) {
+      CaveDash.c   123            size.y += pos.y;
+    00000160 D363                   MOV.L       L503+76,R3 ; __adds
+    00000162 6043                   MOV         R4,R0
+    00000164 430B                   JSR         @R3
+    00000166 51D1                   MOV.L       @(4,R13),R1
+    00000168 1D01                   MOV.L       R0,@(4,R13)
+      CaveDash.c   124            pos.y = 0;
+    0000016A E200                   MOV         #0,R2
+    0000016C 1E21                   MOV.L       R2,@(4,R14)
+    0000016E              L471:                             
+    0000016E D661                   MOV.L       L503+80,R6 ; _screenWidth
+    00000170 65E2                   MOV.L       @R14,R5
+    00000172 D361                   MOV.L       L503+84,R3 ; __itos
+    00000174 430B                   JSR         @R3
+    00000176 6062                   MOV.L       @R6,R0
+    00000178 D25D                   MOV.L       L503+76,R2 ; __adds
+    0000017A 6403                   MOV         R0,R4
+    0000017C 6153                   MOV         R5,R1
+    0000017E 420B                   JSR         @R2
+    00000180 60D2                   MOV.L       @R13,R0
+    00000182 D357                   MOV.L       L503+60,R3 ; __lts
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE    7
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    00000184 430B                   JSR         @R3
+    00000186 6143                   MOV         R4,R1
+    00000188 8800                   CMP/EQ      #0,R0
+    0000018A 8904                   BT          L472
+      CaveDash.c   125        }
+      CaveDash.c   126        if (pos.x + size.x > screenWidth) size.x = screenWidth - pos.x;
+    0000018C D25B                   MOV.L       L503+88,R2 ; __subs
+    0000018E 6143                   MOV         R4,R1
+    00000190 420B                   JSR         @R2
+    00000192 6053                   MOV         R5,R0
+    00000194 2D02                   MOV.L       R0,@R13
+    00000196              L472:                             
+    00000196 54E1                   MOV.L       @(4,R14),R4
+    00000198 D355                   MOV.L       L503+76,R3 ; __adds
+    0000019A 6143                   MOV         R4,R1
+    0000019C 430B                   JSR         @R3
+    0000019E 50D1                   MOV.L       @(4,R13),R0
+    000001A0 D357                   MOV.L       L503+92,R3 ; _screenHeight
+    000001A2 6103                   MOV         R0,R1
+    000001A4 D254                   MOV.L       L503+84,R2 ; __itos
+    000001A6 420B                   JSR         @R2
+    000001A8 6032                   MOV.L       @R3,R0
+    000001AA D24E                   MOV.L       L503+64,R2 ; __gts
+    000001AC 420B                   JSR         @R2
+    000001AE 0009                   NOP
+    000001B0 8800                   CMP/EQ      #0,R0
+    000001B2 8907                   BT          L473
+      CaveDash.c   127        if (pos.y + size.y > screenHeight) size.y = screenWidth - pos.y;
+    000001B4 D250                   MOV.L       L503+84,R2 ; __itos
+    000001B6 420B                   JSR         @R2
+    000001B8 6062                   MOV.L       @R6,R0
+    000001BA 6103                   MOV         R0,R1
+    000001BC D24F                   MOV.L       L503+88,R2 ; __subs
+    000001BE 420B                   JSR         @R2
+    000001C0 6043                   MOV         R4,R0
+    000001C2 1D01                   MOV.L       R0,@(4,R13)
+    000001C4              L473:                             
+      CaveDash.c   128        Bdisp_DrawLineVRAM(pos.x, pos.y, pos.x + size.x, pos.y);
+    000001C4 DC4F                   MOV.L       L503+96,R12; _Bdisp_DrawLineVRAM
+    000001C6 D350                   MOV.L       L503+100,R3; __stoi
+    000001C8 430B                   JSR         @R3
+    000001CA 50E1                   MOV.L       @(4,R14),R0
+    000001CC 2F02                   MOV.L       R0,@R15
+    000001CE 6703                   MOV         R0,R7
+    000001D0 D347                   MOV.L       L503+76,R3 ; __adds
+    000001D2 61E2                   MOV.L       @R14,R1
+    000001D4 1F11                   MOV.L       R1,@(4,R15)
+    000001D6 430B                   JSR         @R3
+    000001D8 60D2                   MOV.L       @R13,R0
+    000001DA D24B                   MOV.L       L503+100,R2; __stoi
+    000001DC 420B                   JSR         @R2
+    000001DE 0009                   NOP
+    000001E0 65F2                   MOV.L       @R15,R5
+    000001E2 6603                   MOV         R0,R6
+    000001E4 D348                   MOV.L       L503+100,R3; __stoi
+    000001E6 430B                   JSR         @R3
+    000001E8 50F1                   MOV.L       @(4,R15),R0
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE    8
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    000001EA 4C0B                   JSR         @R12
+    000001EC 6403                   MOV         R0,R4
+      CaveDash.c   129        Bdisp_DrawLineVRAM(pos.x, pos.y, pos.x, pos.y + size.y);
+    000001EE 51E1                   MOV.L       @(4,R14),R1
+    000001F0 D33F                   MOV.L       L503+76,R3 ; __adds
+    000001F2 1F11                   MOV.L       R1,@(4,R15)
+    000001F4 430B                   JSR         @R3
+    000001F6 50D1                   MOV.L       @(4,R13),R0
+    000001F8 D243                   MOV.L       L503+100,R2; __stoi
+    000001FA 420B                   JSR         @R2
+    000001FC 0009                   NOP
+    000001FE 6703                   MOV         R0,R7
+    00000200 D341                   MOV.L       L503+100,R3; __stoi
+    00000202 430B                   JSR         @R3
+    00000204 60E2                   MOV.L       @R14,R0
+    00000206 6603                   MOV         R0,R6
+    00000208 D33F                   MOV.L       L503+100,R3; __stoi
+    0000020A 2F02                   MOV.L       R0,@R15
+    0000020C 430B                   JSR         @R3
+    0000020E 50F1                   MOV.L       @(4,R15),R0
+    00000210 6503                   MOV         R0,R5
+    00000212 4C0B                   JSR         @R12
+    00000214 64F2                   MOV.L       @R15,R4
+      CaveDash.c   130        Bdisp_DrawLineVRAM(pos.x, pos.y + size.y, pos.x + size.x, pos.y + size.y);
+    00000216 51E1                   MOV.L       @(4,R14),R1
+    00000218 D335                   MOV.L       L503+76,R3 ; __adds
+    0000021A 430B                   JSR         @R3
+    0000021C 50D1                   MOV.L       @(4,R13),R0
+    0000021E D23A                   MOV.L       L503+100,R2; __stoi
+    00000220 420B                   JSR         @R2
+    00000222 0009                   NOP
+    00000224 1F01                   MOV.L       R0,@(4,R15)
+    00000226 6703                   MOV         R0,R7
+    00000228 D331                   MOV.L       L503+76,R3 ; __adds
+    0000022A 61E2                   MOV.L       @R14,R1
+    0000022C 2F12                   MOV.L       R1,@R15
+    0000022E 430B                   JSR         @R3
+    00000230 60D2                   MOV.L       @R13,R0
+    00000232 D235                   MOV.L       L503+100,R2; __stoi
+    00000234 420B                   JSR         @R2
+    00000236 0009                   NOP
+    00000238 55F1                   MOV.L       @(4,R15),R5
+    0000023A 6603                   MOV         R0,R6
+    0000023C D332                   MOV.L       L503+100,R3; __stoi
+    0000023E 430B                   JSR         @R3
+    00000240 60F2                   MOV.L       @R15,R0
+    00000242 4C0B                   JSR         @R12
+    00000244 6403                   MOV         R0,R4
+      CaveDash.c   131        Bdisp_DrawLineVRAM(pos.x + size.x, pos.y, pos.x + size.x, pos.y + size.y);
+    00000246 51E1                   MOV.L       @(4,R14),R1
+    00000248 D329                   MOV.L       L503+76,R3 ; __adds
+    0000024A 1F11                   MOV.L       R1,@(4,R15)
+    0000024C 430B                   JSR         @R3
+    0000024E 50D1                   MOV.L       @(4,R13),R0
+    00000250 D22D                   MOV.L       L503+100,R2; __stoi
+    00000252 420B                   JSR         @R2
+    00000254 0009                   NOP
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE    9
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    00000256 6703                   MOV         R0,R7
+    00000258 61E2                   MOV.L       @R14,R1
+    0000025A D325                   MOV.L       L503+76,R3 ; __adds
+    0000025C 430B                   JSR         @R3
+    0000025E 60D2                   MOV.L       @R13,R0
+    00000260 D229                   MOV.L       L503+100,R2; __stoi
+    00000262 420B                   JSR         @R2
+    00000264 0009                   NOP
+    00000266 6603                   MOV         R0,R6
+    00000268 D327                   MOV.L       L503+100,R3; __stoi
+    0000026A 2F02                   MOV.L       R0,@R15
+    0000026C 430B                   JSR         @R3
+    0000026E 50F1                   MOV.L       @(4,R15),R0
+    00000270 6503                   MOV         R0,R5
+    00000272 4C0B                   JSR         @R12
+    00000274 64F2                   MOV.L       @R15,R4
+      CaveDash.c   132    }
+    00000276 7F08                   ADD         #8,R15
+    00000278 4F26                   LDS.L       @R15+,PR
+    0000027A 6CF6                   MOV.L       @R15+,R12
+    0000027C 6DF6                   MOV.L       @R15+,R13
+    0000027E 000B                   RTS
+    00000280 6EF6                   MOV.L       @R15+,R14
+      CaveDash.c   133    
+      CaveDash.c   134    void Update() {
+    00000282              _Update:                         ; function: Update
+                                                           ; frame size=112
+                                                           ; used runtime library name:
+                                                           ; __adds, __subs, __muls, __divs, __negs, __itos, __gts, __lts, __quick_e
+                        +                                  vn_mvn, __quick_odd_mvn
+    00000282 2FE6                   MOV.L       R14,@-R15
+    00000284 2FD6                   MOV.L       R13,@-R15
+    00000286 2FC6                   MOV.L       R12,@-R15
+    00000288 2FB6                   MOV.L       R11,@-R15
+    0000028A 2FA6                   MOV.L       R10,@-R15
+    0000028C 2F96                   MOV.L       R9,@-R15
+    0000028E 2F86                   MOV.L       R8,@-R15
+    00000290 4F22                   STS.L       PR,@-R15
+    00000292 7FC0                   ADD         #-64,R15
+      CaveDash.c   135        if (!player.dead){
+    00000294 DD1D                   MOV.L       L503+104,R13; _player
+    00000296 63D2                   MOV.L       @R13,R3
+    00000298 2338                   TST         R3,R3
+    0000029A 8B3D                   BF          L474
+      CaveDash.c   136            timeStep = 0.05F;
+    0000029C D31C                   MOV.L       L503+108,R3; H'3D4CCCCD
+    0000029E D21D                   MOV.L       L503+112,R2; _timeStep
+    000002A0 A03D                   BRA         L475
+    000002A2 2232                   MOV.L       R3,@R2
+    000002A4              L503:                             
+    000002A4 40000000               .DATA.L     H'40000000
+    000002A8 3F800000               .DATA.L     H'3F800000
+    000002AC 3DCCCCCD               .DATA.L     H'3DCCCCCD
+    000002B0 <00000000>             .DATA.L     _sin
+    000002B4 <00000000>             .DATA.L     __muls
+    000002B8 447A0000               .DATA.L     H'447A0000
+    000002BC <00000000>             .DATA.L     __divs
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   10
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    000002C0 <00000000>             .DATA.L     __stod
+    000002C4 A0000000               .DATA.L     H'A0000000
+    000002C8 3FDAAAAA               .DATA.L     H'3FDAAAAA
+    000002CC <00000000>             .DATA.L     __muld
+    000002D0 60000000               .DATA.L     H'60000000
+    000002D4 3FC55555               .DATA.L     H'3FC55555
+    000002D8 <00000000>             .DATA.L     __addd
+    000002DC <00000000>             .DATA.L     __dtos
+    000002E0 <00000000>             .DATA.L     __lts
+    000002E4 <00000000>             .DATA.L     __gts
+    000002E8 <00000000>             .DATA.L     _time
+    000002EC 3C23D70A               .DATA.L     H'3C23D70A
+    000002F0 <00000000>             .DATA.L     __adds
+    000002F4 <00000000>             .DATA.L     _screenWidth
+    000002F8 <00000000>             .DATA.L     __itos
+    000002FC <00000000>             .DATA.L     __subs
+    00000300 <00000000>             .DATA.L     _screenHeight
+    00000304 <00000000>             .DATA.L     _Bdisp_DrawLineVRAM
+    00000308 <00000000>             .DATA.L     __stoi
+    0000030C <00000000>             .DATA.L     _player
+    00000310 3D4CCCCD               .DATA.L     H'3D4CCCCD
+    00000314 <00000000>             .DATA.L     _timeStep
+    00000318              L474:                             
+      CaveDash.c   137        }
+      CaveDash.c   138        else timeStep = 0;
+    00000318 D13B                   MOV.L       L504+4,R1  ; _timeStep
+    0000031A E000                   MOV         #0,R0
+    0000031C 2102                   MOV.L       R0,@R1
+    0000031E              L475:                             
+      CaveDash.c   139        
+      CaveDash.c   140        //d = time - c;
+      CaveDash.c   141        //    c = time;
+      CaveDash.c   142        
+      CaveDash.c   143        tunnelWidth -= narrowSpeed * timeStep;
+    0000031E D23A                   MOV.L       L504+4,R2  ; _timeStep
+    00000320 D33A                   MOV.L       L504+8,R3  ; _narrowSpeed
+    00000322 6032                   MOV.L       @R3,R0
+    00000324 D33A                   MOV.L       L504+12,R3 ; __muls
+    00000326 430B                   JSR         @R3
+    00000328 6122                   MOV.L       @R2,R1
+    0000032A D33A                   MOV.L       L504+16,R3 ; _tunnelWidth
+    0000032C D23A                   MOV.L       L504+20,R2 ; __subs
+    0000032E 420B                   JSR         @R2
+    00000330 6132                   MOV.L       @R3,R1
+    00000332 2302                   MOV.L       R0,@R3
+    00000334 D339                   MOV.L       L504+24,R3 ; _minTunnelWidth
+    00000336 6432                   MOV.L       @R3,R4
+    00000338 D239                   MOV.L       L504+28,R2 ; __gts
+    0000033A 420B                   JSR         @R2
+    0000033C 6143                   MOV         R4,R1
+    0000033E 8800                   CMP/EQ      #0,R0
+    00000340 8901                   BT          L476
+      CaveDash.c   144        if (tunnelWidth < minTunnelWidth) {
+      CaveDash.c   145            tunnelWidth = minTunnelWidth;
+    00000342 D234                   MOV.L       L504+16,R2 ; _tunnelWidth
+    00000344 2242                   MOV.L       R4,@R2
+    00000346              L476:                             
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   11
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+      CaveDash.c   146        }
+      CaveDash.c   147        sinAmp += timeStep * 0.005f;
+    00000346 D330                   MOV.L       L504+4,R3  ; _timeStep
+    00000348 D036                   MOV.L       L504+32,R0 ; H'3BA3D70A
+    0000034A 6532                   MOV.L       @R3,R5
+    0000034C D230                   MOV.L       L504+12,R2 ; __muls
+    0000034E 420B                   JSR         @R2
+    00000350 6153                   MOV         R5,R1
+    00000352 D235                   MOV.L       L504+36,R2 ; _sinAmp
+    00000354 D335                   MOV.L       L504+40,R3 ; __adds
+    00000356 430B                   JSR         @R3
+    00000358 6122                   MOV.L       @R2,R1
+    0000035A 2202                   MOV.L       R0,@R2
+      CaveDash.c   148        sinFreq += timeStep * 0.05f;
+    0000035C D034                   MOV.L       L504+44,R0 ; H'3D4CCCCD
+    0000035E D22C                   MOV.L       L504+12,R2 ; __muls
+    00000360 420B                   JSR         @R2
+    00000362 6153                   MOV         R5,R1
+    00000364 D333                   MOV.L       L504+48,R3 ; _sinFreq
+    00000366 6403                   MOV         R0,R4
+    00000368 D230                   MOV.L       L504+40,R2 ; __adds
+    0000036A 420B                   JSR         @R2
+    0000036C 6132                   MOV.L       @R3,R1
+    0000036E 2302                   MOV.L       R0,@R3
+      CaveDash.c   149        scrollSpeed -= timeStep * 0.05f;
+    00000370 D331                   MOV.L       L504+52,R3 ; _scrollSpeed
+    00000372 6043                   MOV         R4,R0
+    00000374 D228                   MOV.L       L504+20,R2 ; __subs
+    00000376 420B                   JSR         @R2
+    00000378 6132                   MOV.L       @R3,R1
+    0000037A 2302                   MOV.L       R0,@R3
+      CaveDash.c   150        globalXPos += timeStep * -scrollSpeed;
+    0000037C D324                   MOV.L       L504+12,R3 ; __muls
+    0000037E 430B                   JSR         @R3
+    00000380 6153                   MOV         R5,R1
+    00000382 D22E                   MOV.L       L504+56,R2 ; __negs
+    00000384 420B                   JSR         @R2
+    00000386 0009                   NOP
+    00000388 D32D                   MOV.L       L504+60,R3 ; _globalXPos
+    0000038A D228                   MOV.L       L504+40,R2 ; __adds
+    0000038C 420B                   JSR         @R2
+    0000038E 6132                   MOV.L       @R3,R1
+    00000390 2302                   MOV.L       R0,@R3
+      CaveDash.c   151        
+      CaveDash.c   152        
+      CaveDash.c   153        if (key == KEY_CTRL_DOWN) {
+    00000392 D42C                   MOV.L       L504+64,R4 ; _key
+    00000394 9336                   MOV.W       L504,R3    ; H'7547
+    00000396 6242                   MOV.L       @R4,R2
+    00000398 3230                   CMP/EQ      R3,R2
+    0000039A 8B04                   BF          L477
+      CaveDash.c   154            if (!player.dead){
+    0000039C 60D2                   MOV.L       @R13,R0
+    0000039E 2008                   TST         R0,R0
+    000003A0 8B01                   BF          L477
+      CaveDash.c   155                player.gravDir = 1;
+    000003A2 D129                   MOV.L       L504+68,R1 ; H'3F800000
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   12
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    000003A4 1D13                   MOV.L       R1,@(12,R13)
+    000003A6              L477:                             
+      CaveDash.c   156                //player.pos.y -= player.gravDir;
+      CaveDash.c   157            }
+      CaveDash.c   158        }
+      CaveDash.c   159            /*else{
+      CaveDash.c   160                player = {
+      CaveDash.c   161                    .pos = {100, screenHeight / 2},
+      CaveDash.c   162                    .gravDir = -1,
+      CaveDash.c   163                    .collided = false,
+      CaveDash.c   164                    .size = {30,30},
+      CaveDash.c   165                    .dead = false
+      CaveDash.c   166                };
+      CaveDash.c   167                struct Platform* platform = &firstPlatform;
+      CaveDash.c   168                while (platform != NULL){
+      CaveDash.c   169    
+      CaveDash.c   170                    
+      CaveDash.c   171            }*/
+      CaveDash.c   172        
+      CaveDash.c   173        if (key == KEY_CTRL_UP) {
+    000003A6 932E                   MOV.W       L504+2,R3  ; H'7542
+    000003A8 6242                   MOV.L       @R4,R2
+    000003AA 3230                   CMP/EQ      R3,R2
+    000003AC 8B04                   BF          L479
+      CaveDash.c   174            if (!player.dead){
+    000003AE 60D2                   MOV.L       @R13,R0
+    000003B0 2008                   TST         R0,R0
+    000003B2 8B01                   BF          L479
+      CaveDash.c   175                player.gravDir = -1;
+    000003B4 D125                   MOV.L       L504+72,R1 ; H'BF800000
+    000003B6 1D13                   MOV.L       R1,@(12,R13)
+    000003B8              L479:                             
+      CaveDash.c   176                //player.pos.y -= player.gravDir;
+      CaveDash.c   177            }
+      CaveDash.c   178        }
+      CaveDash.c   179        //Gravity
+      CaveDash.c   180        player.speed += gravity * player.gravDir * timeStep;
+    000003B8 D225                   MOV.L       L504+76,R2 ; _gravity
+    000003BA 6122                   MOV.L       @R2,R1
+    000003BC D314                   MOV.L       L504+12,R3 ; __muls
+    000003BE 430B                   JSR         @R3
+    000003C0 50D3                   MOV.L       @(12,R13),R0
+    000003C2 D311                   MOV.L       L504+4,R3  ; _timeStep
+    000003C4 6132                   MOV.L       @R3,R1
+    000003C6 D312                   MOV.L       L504+12,R3 ; __muls
+    000003C8 430B                   JSR         @R3
+    000003CA 0009                   NOP
+    000003CC D317                   MOV.L       L504+40,R3 ; __adds
+    000003CE 430B                   JSR         @R3
+    000003D0 51D4                   MOV.L       @(16,R13),R1
+      CaveDash.c   181        player.pos.y += player.speed * timeStep;
+    000003D2 6103                   MOV         R0,R1
+    000003D4 D30C                   MOV.L       L504+4,R3  ; _timeStep
+    000003D6 1D04                   MOV.L       R0,@(16,R13)
+    000003D8 6032                   MOV.L       @R3,R0
+    000003DA D30D                   MOV.L       L504+12,R3 ; __muls
+    000003DC 430B                   JSR         @R3
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   13
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    000003DE 0009                   NOP
+    000003E0 D312                   MOV.L       L504+40,R3 ; __adds
+    000003E2 430B                   JSR         @R3
+    000003E4 51D2                   MOV.L       @(8,R13),R1
+      CaveDash.c   182        
+      CaveDash.c   183        //Collisions
+      CaveDash.c   184        player.collided = 0;
+    000003E6 E900                   MOV         #0,R9
+      CaveDash.c   185        
+      CaveDash.c   186        
+      CaveDash.c   187        
+      CaveDash.c   188        {
+      CaveDash.c   189            struct Platform* platform = &firstPlatform;
+    000003E8 DE1A                   MOV.L       L504+80,R14; _firstPlatform
+    000003EA 68F3                   MOV         R15,R8
+    000003EC 1D02                   MOV.L       R0,@(8,R13)
+    000003EE EA01                   MOV         #1,R10
+      CaveDash.c   190            
+      CaveDash.c   191            c = 0;
+    000003F0 D319                   MOV.L       L504+84,R3 ; _c
+    000003F2 6BF3                   MOV         R15,R11
+    000003F4 1D95                   MOV.L       R9,@(20,R13)
+    000003F6 6193                   MOV         R9,R1
+    000003F8 2392                   MOV.L       R9,@R3
+    000003FA 7830                   ADD         #48,R8
+    000003FC 7B0C                   ADD         #12,R11
+    000003FE 6CF3                   MOV         R15,R12
+      CaveDash.c   192            while (platform != NULL){
+    00000400 A18F                   BRA         L481
+    00000402 7C38                   ADD         #56,R12
+    00000404              L504:                             
+    00000404 7547                   .DATA.W     H'7547
+    00000406 7542                   .DATA.W     H'7542
+    00000408 <00000000>             .DATA.L     _timeStep
+    0000040C <00000000>             .DATA.L     _narrowSpeed
+    00000410 <00000000>             .DATA.L     __muls
+    00000414 <00000000>             .DATA.L     _tunnelWidth
+    00000418 <00000000>             .DATA.L     __subs
+    0000041C <00000000>             .DATA.L     _minTunnelWidth
+    00000420 <00000000>             .DATA.L     __gts
+    00000424 3BA3D70A               .DATA.L     H'3BA3D70A
+    00000428 <00000000>             .DATA.L     _sinAmp
+    0000042C <00000000>             .DATA.L     __adds
+    00000430 3D4CCCCD               .DATA.L     H'3D4CCCCD
+    00000434 <00000000>             .DATA.L     _sinFreq
+    00000438 <00000000>             .DATA.L     _scrollSpeed
+    0000043C <00000000>             .DATA.L     __negs
+    00000440 <00000000>             .DATA.L     _globalXPos
+    00000444 <00000000>             .DATA.L     _key
+    00000448 3F800000               .DATA.L     H'3F800000
+    0000044C BF800000               .DATA.L     H'BF800000
+    00000450 <00000000>             .DATA.L     _gravity
+    00000454 <00000000>             .DATA.L     _firstPlatform
+    00000458 <00000000>             .DATA.L     _c
+    0000045C              L482:                             
+      CaveDash.c   193                
+      CaveDash.c   194                int i;
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   14
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+      CaveDash.c   195                int inside;
+      CaveDash.c   196                c++;
+    0000045C D389                   MOV.L       L505,R3    ; _c
+    0000045E D18A                   MOV.L       L505+4,R1  ; H'3F800000
+    00000460 D28A                   MOV.L       L505+8,R2  ; __adds
+    00000462 420B                   JSR         @R2
+    00000464 6032                   MOV.L       @R3,R0
+    00000466 2302                   MOV.L       R0,@R3
+      CaveDash.c   197                platform->pos.x += timeStep * scrollSpeed;
+    00000468 D389                   MOV.L       L505+12,R3 ; _timeStep
+    0000046A 6132                   MOV.L       @R3,R1
+    0000046C D289                   MOV.L       L505+16,R2 ; _scrollSpeed
+    0000046E D38A                   MOV.L       L505+20,R3 ; __muls
+    00000470 430B                   JSR         @R3
+    00000472 6022                   MOV.L       @R2,R0
+    00000474 D385                   MOV.L       L505+8,R3  ; __adds
+    00000476 430B                   JSR         @R3
+    00000478 51E1                   MOV.L       @(4,R14),R1
+    0000047A 1E01                   MOV.L       R0,@(4,R14)
+      CaveDash.c   198                if (platform->active){
+    0000047C 63E2                   MOV.L       @R14,R3
+    0000047E 2338                   TST         R3,R3
+    00000480 8950                   BT          L483
+      CaveDash.c   199                    for (i = 0; i < 2; i++){
+    00000482 2F92                   MOV.L       R9,@R15
+    00000484              L484:                             
+      CaveDash.c   200                        int j;
+      CaveDash.c   201                        for (j = -1; j < 2; j += 2){
+    00000484 E3FF                   MOV         #-1,R3
+    00000486 1F31                   MOV.L       R3,@(4,R15)
+    00000488 1F92                   MOV.L       R9,@(8,R15)
+    0000048A              L485:                             
+      CaveDash.c   202                            struct Vector2 corner;
+      CaveDash.c   203                            corner.x = player.pos.x + player.size.x * i;
+    0000048A D384                   MOV.L       L505+24,R3 ; __itos
+    0000048C 430B                   JSR         @R3
+    0000048E 60F2                   MOV.L       @R15,R0
+    00000490 D281                   MOV.L       L505+20,R2 ; __muls
+    00000492 420B                   JSR         @R2
+    00000494 51D6                   MOV.L       @(24,R13),R1
+    00000496 D37D                   MOV.L       L505+8,R3  ; __adds
+    00000498 430B                   JSR         @R3
+    0000049A 51D1                   MOV.L       @(4,R13),R1
+    0000049C 2C02                   MOV.L       R0,@R12
+      CaveDash.c   204                            corner.y = player.pos.y + player.size.y * (j + 1 )/2;
+    0000049E D27F                   MOV.L       L505+24,R2 ; __itos
+    000004A0 420B                   JSR         @R2
+    000004A2 50F2                   MOV.L       @(8,R15),R0
+    000004A4 D37C                   MOV.L       L505+20,R3 ; __muls
+    000004A6 430B                   JSR         @R3
+    000004A8 51D7                   MOV.L       @(28,R13),R1
+    000004AA 6103                   MOV         R0,R1
+    000004AC D27D                   MOV.L       L505+32,R2 ; __divs
+    000004AE D07C                   MOV.L       L505+28,R0 ; H'40000000
+    000004B0 420B                   JSR         @R2
+    000004B2 0009                   NOP
+    000004B4 D375                   MOV.L       L505+8,R3  ; __adds
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   15
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    000004B6 430B                   JSR         @R3
+    000004B8 51D2                   MOV.L       @(8,R13),R1
+    000004BA 1C01                   MOV.L       R0,@(4,R12)
+      CaveDash.c   205                            if (corner.x > platform->pos.x && corner.x < platform->pos.x + platform->size.x &&
+                         + corner.y > platform->pos.y && corner.y < platform->pos.y + platform->size.y){
+    000004BC 65C2                   MOV.L       @R12,R5
+    000004BE 54E1                   MOV.L       @(4,R14),R4
+    000004C0 D279                   MOV.L       L505+36,R2 ; __gts
+    000004C2 6153                   MOV         R5,R1
+    000004C4 420B                   JSR         @R2
+    000004C6 6043                   MOV         R4,R0
+    000004C8 8800                   CMP/EQ      #0,R0
+    000004CA 891C                   BT          L486
+    000004CC D36F                   MOV.L       L505+8,R3  ; __adds
+    000004CE 6143                   MOV         R4,R1
+    000004D0 430B                   JSR         @R3
+    000004D2 50E3                   MOV.L       @(12,R14),R0
+    000004D4 D275                   MOV.L       L505+40,R2 ; __lts
+    000004D6 420B                   JSR         @R2
+    000004D8 6153                   MOV         R5,R1
+    000004DA 8800                   CMP/EQ      #0,R0
+    000004DC 8913                   BT          L486
+    000004DE 51C1                   MOV.L       @(4,R12),R1
+    000004E0 D371                   MOV.L       L505+36,R3 ; __gts
+    000004E2 430B                   JSR         @R3
+    000004E4 50E2                   MOV.L       @(8,R14),R0
+    000004E6 8800                   CMP/EQ      #0,R0
+    000004E8 890D                   BT          L486
+    000004EA 51E2                   MOV.L       @(8,R14),R1
+    000004EC D267                   MOV.L       L505+8,R2  ; __adds
+    000004EE 420B                   JSR         @R2
+    000004F0 50E4                   MOV.L       @(16,R14),R0
+    000004F2 D36E                   MOV.L       L505+40,R3 ; __lts
+    000004F4 430B                   JSR         @R3
+    000004F6 51C1                   MOV.L       @(4,R12),R1
+    000004F8 8800                   CMP/EQ      #0,R0
+    000004FA 8904                   BT          L486
+      CaveDash.c   206                                player.collided = 1;
+    000004FC 1DA5                   MOV.L       R10,@(20,R13)
+      CaveDash.c   207                                player.dead = 1;
+    000004FE 2DA2                   MOV.L       R10,@R13
+      CaveDash.c   208                                KillTimer(1);
+    00000500 D26B                   MOV.L       L505+44,R2 ; _KillTimer
+    00000502 420B                   JSR         @R2
+    00000504 E401                   MOV         #1,R4
+    00000506              L486:                             
+    00000506 E102                   MOV         #2,R1
+    00000508 53F1                   MOV.L       @(4,R15),R3
+    0000050A 7302                   ADD         #2,R3
+    0000050C 1F31                   MOV.L       R3,@(4,R15)
+    0000050E 3313                   CMP/GE      R1,R3
+    00000510 52F2                   MOV.L       @(8,R15),R2
+    00000512 7202                   ADD         #2,R2
+    00000514 1F22                   MOV.L       R2,@(8,R15)
+    00000516 8BB8                   BF          L485
+    00000518 63F2                   MOV.L       @R15,R3
+    0000051A E202                   MOV         #2,R2
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   16
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    0000051C 7301                   ADD         #1,R3
+    0000051E 3323                   CMP/GE      R2,R3
+    00000520 8FB0                   BF/S        L484
+    00000522 2F32                   MOV.L       R3,@R15
+    00000524              L483:                             
+    00000524 D163                   MOV.L       L505+48,R1 ; _screenWidth
+    00000526 D35D                   MOV.L       L505+24,R3 ; __itos
+    00000528 430B                   JSR         @R3
+    0000052A 6012                   MOV.L       @R1,R0
+    0000052C 51E1                   MOV.L       @(4,R14),R1
+    0000052E 6403                   MOV         R0,R4
+    00000530 D356                   MOV.L       L505+8,R3  ; __adds
+    00000532 430B                   JSR         @R3
+    00000534 50E3                   MOV.L       @(12,R14),R0
+    00000536 D25C                   MOV.L       L505+36,R2 ; __gts
+    00000538 420B                   JSR         @R2
+    0000053A 6143                   MOV         R4,R1
+    0000053C 8800                   CMP/EQ      #0,R0
+    0000053E 8B01                   BF          L506
+    00000540 A0D4                   BRA         L487
+    00000542 0009                   NOP
+    00000544              L506:                             
+    00000544 53E7                   MOV.L       @(28,R14),R3
+    00000546 2338                   TST         R3,R3
+    00000548 8901                   BT          L507
+    0000054A A0CF                   BRA         L487
+    0000054C 0009                   NOP
+    0000054E              L507:                             
+      CaveDash.c   209                                /*if (player.gravDir == 1) player.pos.y = platform->pos.y - player.size.y;
+      CaveDash.c   210                                else player.pos.y = platform->pos.y + platform->size.y;
+      CaveDash.c   211                                player.speed = 0;*/
+      CaveDash.c   212                            }
+      CaveDash.c   213                        }
+      CaveDash.c   214                    }
+      CaveDash.c   215                    
+      CaveDash.c   216                    /*inside = 0;
+      CaveDash.c   217                    
+      CaveDash.c   218                    for (i = 0; i < 3; i++){
+      CaveDash.c   219                        struct Vector2 corner;
+      CaveDash.c   220                        corner.x = player.pos.x + player.size.x;
+      CaveDash.c   221                        corner.y = player.pos.y + player.size.y * (float)i / 2;
+      CaveDash.c   222                        if (corner.x > platform->pos.x && corner.x < platform->pos.x + platform->size.x && cor
+                         +ner.y > platform->pos.y && corner.y < platform->pos.y + platform->size.y){
+      CaveDash.c   223                            inside++;
+      CaveDash.c   224                        }  
+      CaveDash.c   225                    }
+      CaveDash.c   226                    if (inside > 1) player.dead = 1;*/
+      CaveDash.c   227                }
+      CaveDash.c   228                //Spawn next platform
+      CaveDash.c   229                if (((platform->pos.x + platform->size.x) < screenWidth) && (!(platform->spawnedNext))){
+      CaveDash.c   230                    
+      CaveDash.c   231                    struct Vector2 newPos;
+      CaveDash.c   232                    struct Vector2 newSize;
+      CaveDash.c   233                    
+      CaveDash.c   234                    if (platform->side == -1){
+    0000054E 50E8                   MOV.L       @(32,R14),R0
+    00000550 88FF                   CMP/EQ      #-1,R0
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   17
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    00000552 8B32                   BF          L488
+      CaveDash.c   235                        newPos.x = screenWidth;
+    00000554 1F4E                   MOV.L       R4,@(56,R15)
+      CaveDash.c   236                        newPos.y = 0;
+    00000556 E300                   MOV         #0,R3
+      CaveDash.c   237                        newSize.x = 30;
+    00000558 D257                   MOV.L       L505+52,R2 ; H'41F00000
+    0000055A 1F3F                   MOV.L       R3,@(60,R15)
+    0000055C 2822                   MOV.L       R2,@R8
+      CaveDash.c   238                        newSize.y = ClampFloat(tunnelHeight(globalXPos, sinFreq) * sinAmp + screenHeight / 2 +
+                         + platform->side * tunnelWidth, 2, screenHeight - 2);
+    0000055E D357                   MOV.L       L505+56,R3 ; _screenHeight
+    00000560 D24E                   MOV.L       L505+24,R2 ; __itos
+    00000562 6032                   MOV.L       @R3,R0
+    00000564 420B                   JSR         @R2
+    00000566 70FE                   ADD         #-2,R0
+    00000568 2F06                   MOV.L       R0,@-R15
+    0000056A D355                   MOV.L       L505+60,R3 ; _sinFreq
+    0000056C D255                   MOV.L       L505+64,R2 ; _globalXPos
+    0000056E 6532                   MOV.L       @R3,R5
+    00000570 BD46                   BSR         _tunnelHeight
+    00000572 6422                   MOV.L       @R2,R4
+    00000574 D354                   MOV.L       L505+68,R3 ; _sinAmp
+    00000576 6132                   MOV.L       @R3,R1
+    00000578 D347                   MOV.L       L505+20,R3 ; __muls
+    0000057A 430B                   JSR         @R3
+    0000057C 0009                   NOP
+    0000057E E300                   MOV         #0,R3
+    00000580 D146                   MOV.L       L505+24,R1 ; __itos
+    00000582 2F06                   MOV.L       R0,@-R15
+    00000584 D24D                   MOV.L       L505+56,R2 ; _screenHeight
+    00000586 6022                   MOV.L       @R2,R0
+    00000588 3307                   CMP/GT      R0,R3
+    0000058A 303E                   ADDC        R3,R0
+    0000058C 410B                   JSR         @R1
+    0000058E 4021                   SHAR        R0
+    00000590 D33E                   MOV.L       L505+8,R3  ; __adds
+    00000592 430B                   JSR         @R3
+    00000594 61F6                   MOV.L       @R15+,R1
+    00000596 6203                   MOV         R0,R2
+    00000598 D340                   MOV.L       L505+24,R3 ; __itos
+    0000059A 430B                   JSR         @R3
+    0000059C 50E8                   MOV.L       @(32,R14),R0
+    0000059E D34B                   MOV.L       L505+72,R3 ; _tunnelWidth
+    000005A0 6132                   MOV.L       @R3,R1
+    000005A2 D33D                   MOV.L       L505+20,R3 ; __muls
+    000005A4 430B                   JSR         @R3
+    000005A6 0009                   NOP
+    000005A8 D338                   MOV.L       L505+8,R3  ; __adds
+    000005AA 430B                   JSR         @R3
+    000005AC 6123                   MOV         R2,R1
+    000005AE 6403                   MOV         R0,R4
+    000005B0 D53B                   MOV.L       L505+28,R5 ; H'40000000
+    000005B2 BD9C                   BSR         _ClampFloat
+    000005B4 66F6                   MOV.L       @R15+,R6
+    000005B6 A032                   BRA         L489
+    000005B8 1801                   MOV.L       R0,@(4,R8)
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   18
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    000005BA              L488:                             
+      CaveDash.c   239                    }
+      CaveDash.c   240                    else{
+      CaveDash.c   241                        newPos.x = screenWidth;
+    000005BA 1F4E                   MOV.L       R4,@(56,R15)
+      CaveDash.c   242                        newPos.y = ClampFloat(tunnelHeight(globalXPos, sinFreq) * sinAmp + screenHeight / 2 + 
+                         +platform->side * tunnelWidth, 2, screenHeight - 2);
+    000005BC D33F                   MOV.L       L505+56,R3 ; _screenHeight
+    000005BE 6032                   MOV.L       @R3,R0
+    000005C0 D236                   MOV.L       L505+24,R2 ; __itos
+    000005C2 420B                   JSR         @R2
+    000005C4 70FE                   ADD         #-2,R0
+    000005C6 2F06                   MOV.L       R0,@-R15
+    000005C8 D33D                   MOV.L       L505+60,R3 ; _sinFreq
+    000005CA 6532                   MOV.L       @R3,R5
+    000005CC D23D                   MOV.L       L505+64,R2 ; _globalXPos
+    000005CE BD17                   BSR         _tunnelHeight
+    000005D0 6422                   MOV.L       @R2,R4
+    000005D2 D33D                   MOV.L       L505+68,R3 ; _sinAmp
+    000005D4 6132                   MOV.L       @R3,R1
+    000005D6 D330                   MOV.L       L505+20,R3 ; __muls
+    000005D8 430B                   JSR         @R3
+    000005DA 0009                   NOP
+    000005DC 2F06                   MOV.L       R0,@-R15
+    000005DE E300                   MOV         #0,R3
+    000005E0 D12E                   MOV.L       L505+24,R1 ; __itos
+    000005E2 D236                   MOV.L       L505+56,R2 ; _screenHeight
+    000005E4 6022                   MOV.L       @R2,R0
+    000005E6 3307                   CMP/GT      R0,R3
+    000005E8 303E                   ADDC        R3,R0
+    000005EA 410B                   JSR         @R1
+    000005EC 4021                   SHAR        R0
+    000005EE D327                   MOV.L       L505+8,R3  ; __adds
+    000005F0 430B                   JSR         @R3
+    000005F2 61F6                   MOV.L       @R15+,R1
+    000005F4 D329                   MOV.L       L505+24,R3 ; __itos
+    000005F6 6203                   MOV         R0,R2
+    000005F8 430B                   JSR         @R3
+    000005FA 50E8                   MOV.L       @(32,R14),R0
+    000005FC D333                   MOV.L       L505+72,R3 ; _tunnelWidth
+    000005FE 6132                   MOV.L       @R3,R1
+    00000600 D325                   MOV.L       L505+20,R3 ; __muls
+    00000602 430B                   JSR         @R3
+    00000604 0009                   NOP
+    00000606 D321                   MOV.L       L505+8,R3  ; __adds
+    00000608 430B                   JSR         @R3
+    0000060A 6123                   MOV         R2,R1
+    0000060C D524                   MOV.L       L505+28,R5 ; H'40000000
+    0000060E 6403                   MOV         R0,R4
+    00000610 BD6D                   BSR         _ClampFloat
+    00000612 66F6                   MOV.L       @R15+,R6
+    00000614 1F0F                   MOV.L       R0,@(60,R15)
+      CaveDash.c   243                        newSize.x = 30;
+    00000616 D328                   MOV.L       L505+52,R3 ; H'41F00000
+      CaveDash.c   244                        newSize.y = 1000;
+    00000618 D22D                   MOV.L       L505+76,R2 ; H'447A0000
+    0000061A 2832                   MOV.L       R3,@R8
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   19
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    0000061C 1821                   MOV.L       R2,@(4,R8)
+    0000061E              L489:                             
+      CaveDash.c   245                    }
+      CaveDash.c   246                    d = ClampFloat(40,30,50);//ClampFloat(tunnelHeight(globalXPos, sinFreq) * sinAmp + screenH
+                         +eight / 2 + platform->side * tunnelWidth, 10, screenHeight - 10);
+    0000061E D62D                   MOV.L       L505+80,R6 ; H'42480000
+    00000620 D525                   MOV.L       L505+52,R5 ; H'41F00000
+    00000622 D42D                   MOV.L       L505+84,R4 ; H'42200000
+    00000624 BD63                   BSR         _ClampFloat
+    00000626 0009                   NOP
+    00000628 D22C                   MOV.L       L505+88,R2 ; _d
+      CaveDash.c   247                    {
+      CaveDash.c   248                        struct Platform instance;
+      CaveDash.c   249                        instance.active = 1;
+      CaveDash.c   250                        instance.pos = newPos;
+    0000062A 61B3                   MOV         R11,R1
+    0000062C D32C                   MOV.L       L505+92,R3 ; __quick_evn_mvn
+    0000062E 7104                   ADD         #4,R1
+    00000630 2202                   MOV.L       R0,@R2
+    00000632 62F3                   MOV         R15,R2
+    00000634 2BA2                   MOV.L       R10,@R11
+    00000636 7238                   ADD         #56,R2
+    00000638 430B                   JSR         @R3
+    0000063A E008                   MOV         #8,R0
+      CaveDash.c   251                        instance.size = newSize;
+    0000063C D328                   MOV.L       L505+92,R3 ; __quick_evn_mvn
+    0000063E 61B3                   MOV         R11,R1
+    00000640 710C                   ADD         #12,R1
+    00000642 6283                   MOV         R8,R2
+    00000644 430B                   JSR         @R3
+    00000646 E008                   MOV         #8,R0
+      CaveDash.c   252                        instance.next = platform->next;
+    00000648 52E5                   MOV.L       @(20,R14),R2
+    0000064A 1B25                   MOV.L       R2,@(20,R11)
+      CaveDash.c   253                        instance.side = platform->side; 
+    0000064C 53E8                   MOV.L       @(32,R14),R3
+    0000064E 1B38                   MOV.L       R3,@(32,R11)
+      CaveDash.c   254                        instance.last = platform;
+    00000650 1BE6                   MOV.L       R14,@(24,R11)
+      CaveDash.c   255                        instance.spawnedNext = 0;
+    00000652 1B97                   MOV.L       R9,@(28,R11)
+      CaveDash.c   256                        c++;
+    00000654 D30B                   MOV.L       L505,R3    ; _c
+    00000656 D10C                   MOV.L       L505+4,R1  ; H'3F800000
+    00000658 D20C                   MOV.L       L505+8,R2  ; __adds
+    0000065A 420B                   JSR         @R2
+    0000065C 6032                   MOV.L       @R3,R0
+    0000065E 2302                   MOV.L       R0,@R3
+      CaveDash.c   257                        
+      CaveDash.c   258                        platform->next = malloc(sizeof(*platform));
+    00000660 D320                   MOV.L       L505+96,R3 ; _malloc
+    00000662 430B                   JSR         @R3
+    00000664 E424                   MOV         #36,R4
+      CaveDash.c   259                        *(platform->next) = instance;
+    00000666 6103                   MOV         R0,R1
+    00000668 D31F                   MOV.L       L505+100,R3; __quick_odd_mvn
+    0000066A 62B3                   MOV         R11,R2
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   20
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    0000066C 1E05                   MOV.L       R0,@(20,R14)
+    0000066E 430B                   JSR         @R3
+    00000670 E024                   MOV         #36,R0
+      CaveDash.c   260                    }
+      CaveDash.c   261                    if (platform->next->next != NULL){
+    00000672 52E5                   MOV.L       @(20,R14),R2
+    00000674 5325                   MOV.L       @(20,R2),R3
+    00000676 2338                   TST         R3,R3
+    00000678 8902                   BT          L490
+      CaveDash.c   262                        platform->next->next->last = platform->next;
+    0000067A 54E5                   MOV.L       @(20,R14),R4
+    0000067C 5345                   MOV.L       @(20,R4),R3
+    0000067E 1346                   MOV.L       R4,@(24,R3)
+    00000680              L490:                             
+      CaveDash.c   263                    }
+      CaveDash.c   264                    platform->spawnedNext = 1;
+    00000680 A04E                   BRA         L491
+    00000682 1EA7                   MOV.L       R10,@(28,R14)
+    00000684              L505:                             
+    00000684 <00000000>             .DATA.L     _c
+    00000688 3F800000               .DATA.L     H'3F800000
+    0000068C <00000000>             .DATA.L     __adds
+    00000690 <00000000>             .DATA.L     _timeStep
+    00000694 <00000000>             .DATA.L     _scrollSpeed
+    00000698 <00000000>             .DATA.L     __muls
+    0000069C <00000000>             .DATA.L     __itos
+    000006A0 40000000               .DATA.L     H'40000000
+    000006A4 <00000000>             .DATA.L     __divs
+    000006A8 <00000000>             .DATA.L     __gts
+    000006AC <00000000>             .DATA.L     __lts
+    000006B0 <00000000>             .DATA.L     _KillTimer
+    000006B4 <00000000>             .DATA.L     _screenWidth
+    000006B8 41F00000               .DATA.L     H'41F00000
+    000006BC <00000000>             .DATA.L     _screenHeight
+    000006C0 <00000000>             .DATA.L     _sinFreq
+    000006C4 <00000000>             .DATA.L     _globalXPos
+    000006C8 <00000000>             .DATA.L     _sinAmp
+    000006CC <00000000>             .DATA.L     _tunnelWidth
+    000006D0 447A0000               .DATA.L     H'447A0000
+    000006D4 42480000               .DATA.L     H'42480000
+    000006D8 42200000               .DATA.L     H'42200000
+    000006DC <00000000>             .DATA.L     _d
+    000006E0 <00000000>             .DATA.L     __quick_evn_mvn
+    000006E4 <00000000>             .DATA.L     _malloc
+    000006E8 <00000000>             .DATA.L     __quick_odd_mvn
+    000006EC              L487:                             
+      CaveDash.c   265                }
+      CaveDash.c   266                else if (platform->pos.x + platform->size.x < 0) {
+    000006EC 51E1                   MOV.L       @(4,R14),R1
+    000006EE D360                   MOV.L       L508,R3    ; __adds
+    000006F0 430B                   JSR         @R3
+    000006F2 50E3                   MOV.L       @(12,R14),R0
+    000006F4 D25F                   MOV.L       L508+4,R2  ; __gts
+    000006F6 420B                   JSR         @R2
+    000006F8 E100                   MOV         #0,R1
+    000006FA 8800                   CMP/EQ      #0,R0
+    000006FC 8910                   BT          L491
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   21
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+      CaveDash.c   267                    platform->active = 0;
+    000006FE 2E92                   MOV.L       R9,@R14
+      CaveDash.c   268                    if (platform->last != NULL){
+    00000700 53E6                   MOV.L       @(24,R14),R3
+    00000702 2338                   TST         R3,R3
+    00000704 890C                   BT          L491
+      CaveDash.c   269                        struct Platform* stor = platform;
+      CaveDash.c   270                        
+      CaveDash.c   271                        platform->last->next = platform->next;
+    00000706 53E6                   MOV.L       @(24,R14),R3
+    00000708 52E5                   MOV.L       @(20,R14),R2
+    0000070A 1325                   MOV.L       R2,@(20,R3)
+      CaveDash.c   272                        if (platform->next != NULL){
+    0000070C 53E5                   MOV.L       @(20,R14),R3
+    0000070E 2338                   TST         R3,R3
+    00000710 8D03                   BT/S        L494
+    00000712 64E3                   MOV         R14,R4
+      CaveDash.c   273                            
+      CaveDash.c   274                            platform->next->last = platform->last;
+    00000714 53E5                   MOV.L       @(20,R14),R3
+    00000716 52E6                   MOV.L       @(24,R14),R2
+    00000718 1326                   MOV.L       R2,@(24,R3)
+    0000071A              L494:                             
+      CaveDash.c   275                            
+      CaveDash.c   276                        }
+      CaveDash.c   277                        platform = platform->last;
+      CaveDash.c   278    
+      CaveDash.c   279                        free(stor);
+    0000071A D357                   MOV.L       L508+8,R3  ; _free
+    0000071C 430B                   JSR         @R3
+    0000071E 5EE6                   MOV.L       @(24,R14),R14
+    00000720              L491:                             
+      CaveDash.c   280                    }
+      CaveDash.c   281                }
+      CaveDash.c   282                platform = platform->next;
+    00000720 5EE5                   MOV.L       @(20,R14),R14
+    00000722              L481:                             
+    00000722 2EE8                   TST         R14,R14
+    00000724 8901                   BT          L509
+    00000726 AE99                   BRA         L482
+    00000728 0009                   NOP
+    0000072A              L509:                             
+      CaveDash.c   283            }
+      CaveDash.c   284        }
+      CaveDash.c   285        
+      CaveDash.c   286        
+      CaveDash.c   287        // Drawing
+      CaveDash.c   288        //----------------------------------------------------------------------------------
+      CaveDash.c   289        Bdisp_AllClr_VRAM();
+    0000072A D354                   MOV.L       L508+12,R3 ; _Bdisp_AllClr_VRAM
+    0000072C 430B                   JSR         @R3
+    0000072E 0009                   NOP
+      CaveDash.c   290        {
+      CaveDash.c   291            
+      CaveDash.c   292            struct Platform* platform = &firstPlatform;
+      CaveDash.c   293            int count = 0;
+      CaveDash.c   294            /*
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   22
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+      CaveDash.c   295            //Trail
+      CaveDash.c   296            current = &firstParticle;
+      CaveDash.c   297            while (current->next != NULL){
+      CaveDash.c   298                current = current->next;
+      CaveDash.c   299                DrawRectangleV(current->pos, current->size, LIGHTGRAY);
+      CaveDash.c   300            }*/
+      CaveDash.c   301            
+      CaveDash.c   302            //Player
+      CaveDash.c   303            DrawRect(player.pos, player.size);
+    00000730 D353                   MOV.L       L508+16,R3 ; __quick_evn_mvn
+    00000732 62D3                   MOV         R13,R2
+    00000734 7218                   ADD         #24,R2
+    00000736 E008                   MOV         #8,R0
+    00000738 3F08                   SUB         R0,R15
+    0000073A 430B                   JSR         @R3
+    0000073C 61F3                   MOV         R15,R1
+    0000073E 62D3                   MOV         R13,R2
+    00000740 D34F                   MOV.L       L508+16,R3 ; __quick_evn_mvn
+    00000742 E008                   MOV         #8,R0
+    00000744 7204                   ADD         #4,R2
+    00000746 3F08                   SUB         R0,R15
+    00000748 430B                   JSR         @R3
+    0000074A 61F3                   MOV         R15,R1
+    0000074C BCEA                   BSR         _DrawRect
+    0000074E 0009                   NOP
+      CaveDash.c   304            
+      CaveDash.c   305            //Walls
+      CaveDash.c   306            platform = &firstPlatform;
+    00000750 DE4C                   MOV.L       L508+20,R14; _firstPlatform
+      CaveDash.c   307            
+      CaveDash.c   308            
+      CaveDash.c   309            while (platform != NULL){
+    00000752 A015                   BRA         L495
+    00000754 7F10                   ADD         #16,R15
+    00000756              L496:                             
+      CaveDash.c   310                if (platform->active){
+    00000756 62E2                   MOV.L       @R14,R2
+    00000758 2228                   TST         R2,R2
+    0000075A 8910                   BT          L497
+      CaveDash.c   311                DrawRect(platform->pos, platform->size);
+    0000075C D348                   MOV.L       L508+16,R3 ; __quick_evn_mvn
+    0000075E 62E3                   MOV         R14,R2
+    00000760 720C                   ADD         #12,R2
+    00000762 E008                   MOV         #8,R0
+    00000764 3F08                   SUB         R0,R15
+    00000766 430B                   JSR         @R3
+    00000768 61F3                   MOV         R15,R1
+    0000076A 62E3                   MOV         R14,R2
+    0000076C D344                   MOV.L       L508+16,R3 ; __quick_evn_mvn
+    0000076E E008                   MOV         #8,R0
+    00000770 7204                   ADD         #4,R2
+    00000772 3F08                   SUB         R0,R15
+    00000774 430B                   JSR         @R3
+    00000776 61F3                   MOV         R15,R1
+    00000778 BCD4                   BSR         _DrawRect
+    0000077A 0009                   NOP
+    0000077C 7F10                   ADD         #16,R15
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   23
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    0000077E              L497:                             
+      CaveDash.c   312                }
+      CaveDash.c   313                platform = platform->next;
+    0000077E 5EE5                   MOV.L       @(20,R14),R14
+    00000780              L495:                             
+    00000780 2EE8                   TST         R14,R14
+    00000782 8BE8                   BF          L496
+      CaveDash.c   314                count++;
+      CaveDash.c   315                
+      CaveDash.c   316            }
+      CaveDash.c   317            
+      CaveDash.c   318            //DrawText(TextFormat("Score: %i", -(int)globalXPos / 10 ), 10, 10, 30, LIGHTGRAY);
+      CaveDash.c   319            //DrawText(TextFormat("FPS: %i", GetFPS()), 10, 50, 30, LIGHTGRAY);
+      CaveDash.c   320            //DrawText(TextFormat("%i", GetFPS()), 190, 250, 20, LIGHTGRAY);
+      CaveDash.c   321            /*for (int i = 0; i < 2; i++){
+      CaveDash.c   322                Vector2 corner = {player.pos.x + player.size.x * i, player.pos.y + player.size.y * (player.gra
+                         +vDir + 1 )/2};
+      CaveDash.c   323                DrawCircleV (corner, 5, GREEN);
+      CaveDash.c   324            }
+      CaveDash.c   325            
+      CaveDash.c   326            for (int i = 0; i < 3; i++){
+      CaveDash.c   327                Vector2 corner = {player.pos.x + player.size.x, player.pos.y + player.size.y * (float)i / 2};
+      CaveDash.c   328                DrawCircleV (corner, 5, BLUE);
+      CaveDash.c   329            }
+      CaveDash.c   330            */
+      CaveDash.c   331            //if (player.dead) DrawText("You Are Dead!", 200,200, 50, GRAY);
+      CaveDash.c   332        }
+      CaveDash.c   333        Bdisp_AllClr_DD();
+    00000784 D240                   MOV.L       L508+24,R2 ; _Bdisp_AllClr_DD
+    00000786 420B                   JSR         @R2
+    00000788 0009                   NOP
+      CaveDash.c   334        Bdisp_PutDisp_DD();
+    0000078A D340                   MOV.L       L508+28,R3 ; _Bdisp_PutDisp_DD
+    0000078C 430B                   JSR         @R3
+    0000078E 0009                   NOP
+      CaveDash.c   335    }
+    00000790 7F40                   ADD         #64,R15
+    00000792 4F26                   LDS.L       @R15+,PR
+    00000794 68F6                   MOV.L       @R15+,R8
+    00000796 69F6                   MOV.L       @R15+,R9
+    00000798 6AF6                   MOV.L       @R15+,R10
+    0000079A 6BF6                   MOV.L       @R15+,R11
+    0000079C 6CF6                   MOV.L       @R15+,R12
+    0000079E 6DF6                   MOV.L       @R15+,R13
+    000007A0 000B                   RTS
+    000007A2 6EF6                   MOV.L       @R15+,R14
+      CaveDash.c   336    
+      CaveDash.c   337    int AddIn_main(int isAppli, unsigned short OptionNum)
+    000007A4              _AddIn_main:                     ; function: AddIn_main
+                                                           ; frame size=36
+                                                           ; used runtime library name:
+                                                           ; __itos, __quick_odd_mvn
+      CaveDash.c   338    {
+      CaveDash.c   339        
+      CaveDash.c   340        //Constants
+      CaveDash.c   341        sinAmp = screenHeight / 4;
+    000007A4 D63A                   MOV.L       L508+32,R6 ; _screenHeight
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   24
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    000007A6 7FDC                   ADD         #-36,R15
+    000007A8 6062                   MOV.L       @R6,R0
+    000007AA 4011                   CMP/PZ      R0
+    000007AC 8900                   BT          L498
+    000007AE 7003                   ADD         #3,R0
+    000007B0              L498:                             
+    000007B0 D238                   MOV.L       L508+36,R2 ; __itos
+    000007B2 4021                   SHAR        R0
+    000007B4 420B                   JSR         @R2
+    000007B6 4021                   SHAR        R0
+    000007B8 D337                   MOV.L       L508+40,R3 ; _sinAmp
+      CaveDash.c   342        tunnelWidth = screenHeight / 2;
+    000007BA E200                   MOV         #0,R2
+    000007BC D135                   MOV.L       L508+36,R1 ; __itos
+    000007BE 2302                   MOV.L       R0,@R3
+    000007C0 6062                   MOV.L       @R6,R0
+    000007C2 3207                   CMP/GT      R0,R2
+    000007C4 302E                   ADDC        R2,R0
+    000007C6 410B                   JSR         @R1
+    000007C8 4021                   SHAR        R0
+      CaveDash.c   343        
+      CaveDash.c   344        
+      CaveDash.c   345        
+      CaveDash.c   346        //Variable Initialisation
+      CaveDash.c   347        //player = {0,(struct Vector2){100, screenHeight / 2}, -1, 0, 0, (struct Vector2){30,30}};
+      CaveDash.c   348        player.dead = 0;
+    000007CA E500                   MOV         #0,R5
+    000007CC D434                   MOV.L       L508+48,R4 ; _player
+    000007CE D233                   MOV.L       L508+44,R2 ; _tunnelWidth
+      CaveDash.c   349        player.pos.x = 10;
+    000007D0 D334                   MOV.L       L508+52,R3 ; H'41200000
+    000007D2 2202                   MOV.L       R0,@R2
+    000007D4 2452                   MOV.L       R5,@R4
+    000007D6 1431                   MOV.L       R3,@(4,R4)
+      CaveDash.c   350        player.pos.y = screenHeight / 2;
+    000007D8 6062                   MOV.L       @R6,R0
+    000007DA 6353                   MOV         R5,R3
+    000007DC D12D                   MOV.L       L508+36,R1 ; __itos
+    000007DE 3307                   CMP/GT      R0,R3
+    000007E0 303E                   ADDC        R3,R0
+    000007E2 410B                   JSR         @R1
+    000007E4 4021                   SHAR        R0
+      CaveDash.c   351        player.gravDir = -1;
+      CaveDash.c   352        player.collided = 0;
+      CaveDash.c   353        player.size.x = 10;
+      CaveDash.c   354        player.size.y = 10;
+      CaveDash.c   355        
+      CaveDash.c   356        firstPlatform.active = 1;
+    000007E6 EC01                   MOV         #1,R12
+    000007E8 DE26                   MOV.L       L508+20,R14; _firstPlatform
+    000007EA 1402                   MOV.L       R0,@(8,R4)
+    000007EC D32E                   MOV.L       L508+56,R3 ; H'BF800000
+    000007EE 1433                   MOV.L       R3,@(12,R4)
+    000007F0 1455                   MOV.L       R5,@(20,R4)
+    000007F2 D12C                   MOV.L       L508+52,R1 ; H'41200000
+    000007F4 1416                   MOV.L       R1,@(24,R4)
+    000007F6 6313                   MOV         R1,R3
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   25
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    000007F8 1417                   MOV.L       R1,@(28,R4)
+      CaveDash.c   357        firstPlatform.pos.x = 0;
+    000007FA 6153                   MOV         R5,R1
+      CaveDash.c   358        firstPlatform.pos.y = 0;
+      CaveDash.c   359        firstPlatform.size.x = screenWidth;
+    000007FC D42B                   MOV.L       L508+60,R4 ; _screenWidth
+    000007FE 6313                   MOV         R1,R3
+    00000800 2EC2                   MOV.L       R12,@R14
+    00000802 1E51                   MOV.L       R5,@(4,R14)
+    00000804 1E12                   MOV.L       R1,@(8,R14)
+    00000806 D123                   MOV.L       L508+36,R1 ; __itos
+    00000808 410B                   JSR         @R1
+    0000080A 6042                   MOV.L       @R4,R0
+    0000080C 1E03                   MOV.L       R0,@(12,R14)
+      CaveDash.c   360        firstPlatform.size.y = 5;
+      CaveDash.c   361        firstPlatform.side = -1;
+    0000080E E1FF                   MOV         #-1,R1
+    00000810 D327                   MOV.L       L508+64,R3 ; H'40A00000
+      CaveDash.c   362        firstPlatform.spawnedNext = 0;
+      CaveDash.c   363        firstPlatform.last = NULL;
+      CaveDash.c   364        {
+      CaveDash.c   365            struct Platform second;
+      CaveDash.c   366            second.active = 1;
+    00000812 6DF3                   MOV         R15,R13
+    00000814 1E34                   MOV.L       R3,@(16,R14)
+      CaveDash.c   367            second.pos.x = 0;
+    00000816 6353                   MOV         R5,R3
+    00000818 1E18                   MOV.L       R1,@(32,R14)
+    0000081A 1E57                   MOV.L       R5,@(28,R14)
+    0000081C 1E56                   MOV.L       R5,@(24,R14)
+    0000081E 2DC2                   MOV.L       R12,@R13
+    00000820 1D51                   MOV.L       R5,@(4,R13)
+      CaveDash.c   368            second.pos.y = screenHeight - 5;
+    00000822 6062                   MOV.L       @R6,R0
+    00000824 D31B                   MOV.L       L508+36,R3 ; __itos
+    00000826 430B                   JSR         @R3
+    00000828 70FB                   ADD         #-5,R0
+    0000082A 1D02                   MOV.L       R0,@(8,R13)
+      CaveDash.c   369            second.size.x = screenWidth;
+    0000082C D119                   MOV.L       L508+36,R1 ; __itos
+    0000082E 410B                   JSR         @R1
+    00000830 6042                   MOV.L       @R4,R0
+      CaveDash.c   370            second.size.y = 5;
+      CaveDash.c   371            second.side = 1;
+      CaveDash.c   372            second.next = NULL;
+      CaveDash.c   373            second.last = &firstPlatform;
+    00000832 61E3                   MOV         R14,R1
+    00000834 1D03                   MOV.L       R0,@(12,R13)
+    00000836 D31E                   MOV.L       L508+64,R3 ; H'40A00000
+    00000838 1D34                   MOV.L       R3,@(16,R13)
+    0000083A 1DC8                   MOV.L       R12,@(32,R13)
+    0000083C 1D55                   MOV.L       R5,@(20,R13)
+    0000083E 1DE6                   MOV.L       R14,@(24,R13)
+      CaveDash.c   374            second.spawnedNext = 0;
+    00000840 1D57                   MOV.L       R5,@(28,R13)
+      CaveDash.c   375            
+      CaveDash.c   376            firstPlatform.next =  malloc(sizeof(firstPlatform));
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   26
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    00000842 D31C                   MOV.L       L508+68,R3 ; _malloc
+    00000844 430B                   JSR         @R3
+    00000846 E424                   MOV         #36,R4
+    00000848 1E05                   MOV.L       R0,@(20,R14)
+      CaveDash.c   377            
+      CaveDash.c   378            *(firstPlatform.next) = second;
+    0000084A 6103                   MOV         R0,R1
+    0000084C D31A                   MOV.L       L508+72,R3 ; __quick_odd_mvn
+    0000084E 62D3                   MOV         R13,R2
+    00000850 430B                   JSR         @R3
+    00000852 E024                   MOV         #36,R0
+      CaveDash.c   379        }
+      CaveDash.c   380        
+      CaveDash.c   381    
+      CaveDash.c   382        Bdisp_AllClr_DDVRAM();
+    00000854 D219                   MOV.L       L508+76,R2 ; _Bdisp_AllClr_DDVRAM
+    00000856 420B                   JSR         @R2
+    00000858 0009                   NOP
+      CaveDash.c   383        SetTimer(1,15,Update);
+    0000085A E50F                   MOV         #15,R5
+    0000085C D319                   MOV.L       L508+84,R3 ; _SetTimer
+    0000085E D618                   MOV.L       L508+80,R6 ; _Update
+    00000860 430B                   JSR         @R3
+    00000862 64C3                   MOV         R12,R4
+    00000864 DE18                   MOV.L       L508+88,R14; _GetKey
+      CaveDash.c   384        //SetTimer(1,10, incTime);
+      CaveDash.c   385        while(1){
+    00000866              L500:                             
+      CaveDash.c   386            GetKey(&key);
+    00000866 D419                   MOV.L       L508+92,R4 ; _key
+    00000868 4E0B                   JSR         @R14
+    0000086A 0009                   NOP
+    0000086C AFFB                   BRA         L500
+    0000086E 0009                   NOP
+    00000870              L508:                             
+    00000870 <00000000>             .DATA.L     __adds
+    00000874 <00000000>             .DATA.L     __gts
+    00000878 <00000000>             .DATA.L     _free
+    0000087C <00000000>             .DATA.L     _Bdisp_AllClr_VRAM
+    00000880 <00000000>             .DATA.L     __quick_evn_mvn
+    00000884 <00000000>             .DATA.L     _firstPlatform
+    00000888 <00000000>             .DATA.L     _Bdisp_AllClr_DD
+    0000088C <00000000>             .DATA.L     _Bdisp_PutDisp_DD
+    00000890 <00000000>             .DATA.L     _screenHeight
+    00000894 <00000000>             .DATA.L     __itos
+    00000898 <00000000>             .DATA.L     _sinAmp
+    0000089C <00000000>             .DATA.L     _tunnelWidth
+    000008A0 <00000000>             .DATA.L     _player
+    000008A4 41200000               .DATA.L     H'41200000
+    000008A8 BF800000               .DATA.L     H'BF800000
+    000008AC <00000000>             .DATA.L     _screenWidth
+    000008B0 40A00000               .DATA.L     H'40A00000
+    000008B4 <00000000>             .DATA.L     _malloc
+    000008B8 <00000000>             .DATA.L     __quick_odd_mvn
+    000008BC <00000000>             .DATA.L     _Bdisp_AllClr_DDVRAM
+    000008C0 <00000000>             .DATA.L     _Update
+    000008C4 <00000000>             .DATA.L     _SetTimer
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   27
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    000008C8 <00000000>             .DATA.L     _GetKey
+    000008CC <00000000>             .DATA.L     _key
+      CaveDash.c   387            
+      CaveDash.c   388            
+      CaveDash.c   389        }
+      CaveDash.c   390    
+      CaveDash.c   391        return 1;
+      CaveDash.c   392    }
+      CaveDash.c   393    
+      CaveDash.c   394    
+      CaveDash.c   395    
+      CaveDash.c   396    
+      CaveDash.c   397    //****************************************************************************
+      CaveDash.c   398    //**************                                              ****************
+      CaveDash.c   399    //**************                 Notice!                      ****************
+      CaveDash.c   400    //**************                                              ****************
+      CaveDash.c   401    //**************  Please do not change the following source.  ****************
+      CaveDash.c   402    //**************                                              ****************
+      CaveDash.c   403    //****************************************************************************
+      CaveDash.c   404    
+      CaveDash.c   405    
+      CaveDash.c   406    #pragma section _BR_Size
+      CaveDash.c   407    unsigned long BR_Size;
+      CaveDash.c   408    #pragma section
+      CaveDash.c   409    
+      CaveDash.c   410    
+      CaveDash.c   411    #pragma section _TOP
+      CaveDash.c   412    
+      CaveDash.c   413    //****************************************************************************
+      CaveDash.c   414    //  InitializeSystem
+      CaveDash.c   415    //
+      CaveDash.c   416    //  param   :   isAppli   : 1 = Application / 0 = eActivity
+      CaveDash.c   417    //              OptionNum : Option Number (only eActivity)
+      CaveDash.c   418    //
+      CaveDash.c   419    //  retval  :   1 = No error / 0 = Error
+      CaveDash.c   420    //
+      CaveDash.c   421    //****************************************************************************
+      CaveDash.c   422    int InitializeSystem(int isAppli, unsigned short OptionNum)
+P_T 00000000              _InitializeSystem:               ; function: InitializeSystem
+                                                           ; frame size=0
+      CaveDash.c   423    {
+      CaveDash.c   424        return INIT_ADDIN_APPLICATION(isAppli, OptionNum);
+    00000000 D301                   MOV.L       L510+2,R3  ; _INIT_ADDIN_APPLICATION
+    00000002 432B                   JMP         @R3
+    00000004 0009                   NOP
+    00000006              L510:                             
+    00000006 0000                   .DATA.W     0
+    00000008 <00000000>             .DATA.L     _INIT_ADDIN_APPLICATION
+      CaveDash.c   425    }
+      CaveDash.c   426    
+      CaveDash.c   427    #pragma section
+      CaveDash.c   428    
+C   00000000              _screenWidth:                    ; static: screenWidth
+    00000000 0000007F               .DATA.L     H'0000007F
+    00000004              _screenHeight:                   ; static: screenHeight
+    00000004 0000003F               .DATA.L     H'0000003F
+    00000008              _gravity:                        ; static: gravity
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE   28
+
+
+SCT OFFSET   CODE       C LABEL     INSTRUCTION OPERAND    COMMENT
+
+    00000008 40A00000               .DATA.L     H'40A00000
+D   00000000              _time:                           ; static: time
+    00000000 00000000               .DATA.L     H'00000000
+    00000004              _d:                              ; static: d
+    00000004 00000000               .DATA.L     H'00000000
+    00000008              _c:                              ; static: c
+    00000008 00000000               .DATA.L     H'00000000
+    0000000C              _timeStep:                       ; static: timeStep
+    0000000C 3F800000               .DATA.L     H'3F800000
+    00000010              _scrollSpeed:                    ; static: scrollSpeed
+    00000010 C1200000               .DATA.L     H'C1200000
+    00000014              _sinFreq:                        ; static: sinFreq
+    00000014 41200000               .DATA.L     H'41200000
+    00000018              _minTunnelWidth:                 ; static: minTunnelWidth
+    00000018 41A00000               .DATA.L     H'41A00000
+    0000001C              _narrowSpeed:                    ; static: narrowSpeed
+    0000001C 40200000               .DATA.L     H'40200000
+    00000020              _globalXPos:                     ; static: globalXPos
+    00000020 00000000               .DATA.L     H'00000000
+B   00000000              _key:                            ; static: key
+    00000000 00000004               .RES.L      1
+    00000004              _sinAmp:                         ; static: sinAmp
+    00000004 00000004               .RES.L      1
+    00000008              _tunnelWidth:                    ; static: tunnelWidth
+    00000008 00000004               .RES.L      1
+    0000000C              _player:                         ; static: player
+    0000000C 00000020               .RES.L      8
+    0000002C              _firstPlatform:                  ; static: firstPlatform
+    0000002C 00000024               .RES.L      9
+B_B 00000000              _BR_Size:                        ; static: BR_Size
+    00000000 00000004               .RES.L      1
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SH SERIES C/C++ Compiler (Ver. 6.0C)                                                                 18-Jun-2021 13:54:11  PAGE    1
+
+
+******** STATISTICS INFORMATION ********
+
+
+********** ERROR INFORMATION ***********
+
+NUMBER OF ERRORS:           0
+NUMBER OF WARNINGS:         1
+
+
+
+
+******* SOURCE LINE INFORMATION ********
+
+COMPILED SOURCE LINE:      428
+
+
+
+******* SECTION SIZE INFORMATION *******
+
+PROGRAM  SECTION (P):                               000008D0 Byte(s)
+PROGRAM  SECTION (P_BR_Size):                       00000000 Byte(s)
+PROGRAM  SECTION (P_TOP):                           0000000C Byte(s)
+CONSTANT SECTION (C):                               0000000C Byte(s)
+CONSTANT SECTION (C_BR_Size):                       00000000 Byte(s)
+CONSTANT SECTION (C_TOP):                           00000000 Byte(s)
+DATA     SECTION (D):                               00000024 Byte(s)
+DATA     SECTION (D_BR_Size):                       00000000 Byte(s)
+DATA     SECTION (D_TOP):                           00000000 Byte(s)
+BSS      SECTION (B):                               00000050 Byte(s)
+BSS      SECTION (B_BR_Size):                       00000004 Byte(s)
+BSS      SECTION (B_TOP):                           00000000 Byte(s)
+
+ TOTAL PROGRAM SIZE: 00000960 Byte(s)
+
+
+
+********** LABEL INFORMATION ***********
+
+NUMBER OF EXTERNAL REFERENCE SYMBOLS:           27
+NUMBER OF EXTERNAL DEFINITION SYMBOLS:          25
+NUMBER OF INTERNAL/EXTERNAL SYMBOLS:            88
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+*** COMMAND PARAMETER ***
+
+
+  -subcommand=C:\Users\pinks\AppData\Local\Temp\hmkFB11.tmp 
+
