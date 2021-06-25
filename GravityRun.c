@@ -125,7 +125,6 @@ int main(void)
                 };
                 struct Platform* platform = &firstPlatform;
                 while (platform != NULL){
-
                     
             }*/
         }
