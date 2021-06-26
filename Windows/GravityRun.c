@@ -37,10 +37,10 @@ int main(void)
     // Initialization
     //--------------------------------------------------------------------------------------
     const int screenWidth = 800;
-    const int screenHeight = 450;
+    const int screenHeight = 533;
     const float gravity = 400;
 
-    InitWindow(screenWidth, screenHeight, "Gravity Run");
+    InitWindow(screenWidth, screenHeight, "Cave Dash");
 
     SetTargetFPS(60);               // Set our game to run at 60 frames-per-second
     
@@ -75,24 +75,29 @@ int main(void)
         {.pos = {0, screenHeight - 50}, .size = {screenWidth, 50}, .color = BLUE},
         {.pos = {0, 0}, .size = {screenWidth, 50}, .color = RED},
     };*/
+    float timeStep = 1;
+    float scrollSpeed = -200;
+    float sinFreq = 1;
+    float sinAmp = screenHeight / 4;
+    float tunnelWidth = screenHeight / 4 + 40;
+    float minTunnelWidth = 100;
+    float narrowSpeed = 2.5F;
+    float globalXPos = GetRandomValue(0,10000);
+    float platformHeight = screenHeight;
+    Color tunnelColors[] = {DARKGRAY, DARKGRAY};
+    Color bgColor = BLACK;
+    float score = 0;
     
-    struct Platform firstPlatform = {.pos = {0, -40}, .size = {screenWidth, 50}, .color = RED, .side = -1};
+    struct Platform firstPlatform = {.pos = {0, -40}, .size = {screenWidth, 50}, .color = tunnelColors[0], .side = 1};
     {
         firstPlatform.next = malloc(sizeof(firstPlatform));
-        struct Platform second = {.pos = {0, screenHeight - 10}, .size = {screenWidth, 50}, .color = BLUE, .side = 1, .last = &firstPlatform};
+        struct Platform second = {.pos = {0, screenHeight - 10}, .size = {screenWidth, 50}, .color = tunnelColors[1], .side = -1, .last = &firstPlatform};
         *(firstPlatform.next) = second;
     }
    
     
     
-    float timeStep = 1;
-    float scrollSpeed = -200;
-    float sinFreq = 1;
-    float sinAmp = screenHeight / 4;
-    float tunnelWidth = screenHeight / 2 + 40;
-    float minTunnelWidth = 100;
-    float narrowSpeed = 2.5F;
-    float globalXPos = 0;
+
     
     // Main game loop
     while (!WindowShouldClose())    // Detect window close button or ESC key
@@ -121,12 +126,19 @@ int main(void)
                     .collided = false,
                     .size = {30,30},
                     .color = RED,
-                    .dead = false
+                    .dead = false/
                 };
                 struct Platform* platform = &firstPlatform;
                 while (platform != NULL){
                     
             }*/
+        }
+        if (IsKeyPressed(KEY_A)) {
+            int a = 10000;
+            while (a > 0) {
+                a--;
+                printf("a");
+            }
         }
         
         
@@ -138,6 +150,7 @@ int main(void)
         player.collided = false;
         
         globalXPos += timeStep * scrollSpeed;
+        score += timeStep * scrollSpeed;
         
         struct Platform* platform = &firstPlatform;
         while (platform != NULL){
@@ -165,9 +178,25 @@ int main(void)
             }
             if (inside > 1) player.dead = true;
             
+            
+            
             //Spawn next platform
             if (platform->pos.x + platform->size.x < screenWidth && !platform->spawnedNext){
-                struct Platform instance = {.pos = {screenWidth, ClampFloat(tunnelHeight(globalXPos, sinFreq) * sinAmp + screenHeight / 2 + platform->side * tunnelWidth, -platform->size.y + 10, screenHeight - 10)}, .size = {15, 50}, .color = BLUE, .next = platform->next, .side = platform->side, .last = platform};
+                struct Platform instance = {
+                    .pos = {
+                        screenWidth,
+                        ClampFloat(tunnelHeight(globalXPos, sinFreq) * sinAmp + screenHeight / 2 + platform->side * tunnelWidth - (1-platform->side) / 2 * platformHeight , -platformHeight + 10, screenHeight - 10)
+                    }, 
+                    .size = {
+                        15, 
+                        platformHeight
+                    }, 
+                    
+                    .color = tunnelColors[(platform->side+1)/2], 
+                    .next = platform->next, 
+                    .side = platform->side, 
+                    .last = platform
+                };
                 
                 platform->next = malloc(sizeof(*platform));
                 *(platform->next) = instance;
@@ -180,6 +209,7 @@ int main(void)
                 if (platform->last != NULL){
                     platform->last->next = platform->next;
                     platform->next->last = platform->last;
+                    free(platform);
                 }
             }
             
@@ -191,7 +221,7 @@ int main(void)
         //----------------------------------------------------------------------------------
         BeginDrawing();
 
-            ClearBackground(RAYWHITE);
+            ClearBackground(bgColor);
             
             DrawRectangleV(player.pos, player.size, player.color);
             
@@ -205,7 +235,7 @@ int main(void)
                 count++;
             }
             
-            DrawText(TextFormat("Score: %i", -(int)globalXPos / 10 ), 10, 10, 30, LIGHTGRAY);
+            DrawText(TextFormat("Score: %i", -(int)score / 10 ), 10, 10, 30, LIGHTGRAY);
             //DrawText(TextFormat("%i", GetFPS()), 190, 250, 20, LIGHTGRAY);
             for (int i = 0; i < 2; i++){
                 Vector2 corner = {player.pos.x + player.size.x * i, player.pos.y + player.size.y * (player.gravDir + 1 )/2};
